@@ -9,15 +9,15 @@
 <body link="black" alink="black" vlink="black">
     <center>
     <font face="Bold" size="3">
-        <a href="<a href="/filmes">FILMES</a>">FILMES</a>
-        <a href="">CRÍTICA</a>
-        <a href="">LOGIN</a>
-        <a href="">PERFIL</a>
-        <a href="">AVALIAÇÕES</a>
+        <a href="#">FILMES</a>
+        <a href="#">CRÍTICA</a>
+        <a href="#">LOGIN</a>
+        <a href="#">PERFIL</a>
+        <a href="#">AVALIAÇÕES</a>
     </font>
     </center>
 
-    <img src="/static/img/imoge.jpg" alt="imagem filme interestelar" width="100%" height="">
+    <img src="" alt="imagem filme interestelar" width="100%" height="">
     <h1>Filmes UnB</h1>
     <center>
     <font face="Georgia" size="5" color=>

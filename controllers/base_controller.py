@@ -39,3 +39,6 @@ class BaseController:
         """Método auxiliar para redirecionamento"""
         from bottle import redirect as bottle_redirect
         return bottle_redirect(path)
+
+
+
