@@ -9,7 +9,7 @@
 <body link="black" alink="black" vlink="black">
     <center>
     <font face="Bold" size="3">
-        <a href="<a href="/filmes">FILMES</a>">FILMES</a>
+        <a href="">FILMES</a>
         <a href="">CRÍTICA</a>
         <a href="">LOGIN</a>
         <a href="">PERFIL</a>
