@@ -1,14 +1,16 @@
 [
     {
-        "id": 1,
-        "name": "caca",
-        "email": "ca@email.com",
-        "birthdate": "1999-10-21"
+        "id": 3,
+        "name": "lele",
+        "email": "lele@gmail.com",
+        "senha": "12345",
+        "birthdate": "2002-01-12"
     },
     {
-        "id": 2,
-        "name": "keke",
-        "email": "ke@gmail.com",
-        "birthdate": "2001-01-01"
+        "id": 4,
+        "name": "meme",
+        "email": "meme@gmail.com",
+        "senha": "$2b$12$Q2HDm6ofvpB89IpLTw5nm.yHw7NMp9eAUPB.sBTFhaLvCXEcWq0wW",
+        "birthdate": "2000-02-01"
     }
 ]

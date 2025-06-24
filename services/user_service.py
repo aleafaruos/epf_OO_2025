@@ -1,5 +1,6 @@
 from bottle import request
 from models.user import UserModel, User
+import bcrypt 
 
 class UserService:
     def __init__(self):
@@ -16,9 +17,11 @@ class UserService:
         new_id = last_id + 1
         name = request.forms.get('name')
         email = request.forms.get('email')
+        raw_senha = request.forms.get('senha')
         birthdate = request.forms.get('birthdate')
 
-        user = User(id=new_id, name=name, email=email, birthdate=birthdate)
+        hashed_senha = bcrypt.hashpw(raw_senha.encode('utf-8'), bcrypt.gensalt(rounds=12)).decode('utf-8')
+        user = User(id=new_id, name=name, email=email, birthdate=birthdate, senha=hashed_senha)
         self.user_model.add_user(user)
 
 
@@ -29,11 +32,16 @@ class UserService:
     def edit_user(self, user):
         name = request.forms.get('name')
         email = request.forms.get('email')
+        raw_senha = request.forms.get('senha')
         birthdate = request.forms.get('birthdate')
-
+        
         user.name = name
         user.email = email
         user.birthdate = birthdate
+
+        if raw_senha:
+            hashed_senha = bcrypt.hashpw(raw_senha.encode('utf-8'), bcrypt.gensalt(rounds=12)).decode('utf-8')
+            user.senha = hashed_senha
 
         self.user_model.update_user(user)
 
