@@ -48,3 +48,12 @@ class UserService:
 
     def delete_user(self, user_id):
         self.user_model.delete_user(user_id)
+
+    def check_credentials(self, email, raw_password):
+        user = self.user_model.get_by_email(email)
+
+        if user:
+    
+            if bcrypt.checkpw(raw_password.encode('utf-8'), user.senha.encode('utf-8')):
+                return user 
+        return None 

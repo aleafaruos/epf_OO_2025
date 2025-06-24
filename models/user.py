@@ -85,3 +85,10 @@ class UserModel:
     def delete_user(self, user_id: int):
         self.users = [u for u in self.users if u.id != user_id]
         self._save()
+
+
+    def get_by_email(self, email: str):
+        for user in self.users:
+            if user.email == email:
+                return user
+        return None

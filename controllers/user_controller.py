@@ -1,4 +1,4 @@
-from bottle import Bottle, request
+from bottle import Bottle, request, redirect
 from .base_controller import BaseController
 from services.user_service import UserService
 
@@ -16,6 +16,8 @@ class UserController(BaseController):
         self.app.route('/users/add', method=['GET', 'POST'], callback=self.add_user)
         self.app.route('/users/edit/<user_id:int>', method=['GET', 'POST'], callback=self.edit_user)
         self.app.route('/users/delete/<user_id:int>', method='POST', callback=self.delete_user)
+        self.app.route('/login', method='GET', callback=self.login_form)
+        self.app.route('/login', method='POST', callback=self.do_login)
 
 
     def list_users(self):
@@ -49,6 +51,27 @@ class UserController(BaseController):
         self.user_service.delete_user(user_id)
         self.redirect('/users')
 
+    def login_form(self):
+        # Passa email vazio e mensagem de erro vazia para o template inicialmente
+        return self.render('login_form', email='', error_message='')
+
+    def do_login(self):
+        email = request.forms.get('email')
+        raw_password = request.forms.get('senha')
+
+        user = self.user_service.check_credentials(email, raw_password)
+
+        if user:
+            # Login bem-sucedido!
+            # FUTURAMENTE: Aqui você configuraria uma sessão para o usuário (cookies, etc.)
+            print(f"Usuário {user.name} logado com sucesso!")
+            self.redirect('/users') # Redireciona para a lista de usuários ou dashboard
+
+        else:
+            # Login falhou
+            error = "Email ou senha inválidos."
+            # Renderiza o formulário novamente, passando o email digitado e a mensagem de erro
+            return self.render('login_form', email=email, error_message=error)
 
 user_routes = Bottle()
 user_controller = UserController(user_routes)
