@@ -6,11 +6,13 @@ from typing import List
 DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data')
 
 class User:
-    def __init__(self, id, name, email, birthdate):
+    def __init__(self, id, name, email, birthdate, senha):
         self.id = id
         self.name = name
         self.email = email
+        self.senha=senha
         self.birthdate = birthdate
+
 
 
     def __repr__(self):
@@ -23,6 +25,7 @@ class User:
             'id': self.id,
             'name': self.name,
             'email': self.email,
+            'senha':self.senha,
             'birthdate': self.birthdate
         }
 
@@ -33,6 +36,7 @@ class User:
             id=data['id'],
             name=data['name'],
             email=data['email'],
+            senha=data['senha'],
             birthdate=data['birthdate']
         )
 
