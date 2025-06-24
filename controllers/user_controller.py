@@ -1,13 +1,13 @@
-from bottle import Bottle, request, redirect
+from bottle import Bottle, request, redirect,response
 from .base_controller import BaseController
 from services.user_service import UserService
 
 class UserController(BaseController):
     def __init__(self, app):
         super().__init__(app)
-
-        self.setup_routes()
         self.user_service = UserService()
+        self.SESSION_COOKIE_NAME = 'user_session_id'
+        self.setup_routes()
 
 
     # Rotas User
@@ -16,16 +16,30 @@ class UserController(BaseController):
         self.app.route('/users/add', method=['GET', 'POST'], callback=self.add_user)
         self.app.route('/users/edit/<user_id:int>', method=['GET', 'POST'], callback=self.edit_user)
         self.app.route('/users/delete/<user_id:int>', method='POST', callback=self.delete_user)
+
         self.app.route('/login', method='GET', callback=self.login_form)
         self.app.route('/login', method='POST', callback=self.do_login)
 
+        self.app.route('/logout', method='GET', callback=self.do_logout)
+
 
     def list_users(self):
+        # --- NOVO: Proteção de Rota ---
+        logged_in_user = self.get_logged_in_user()
+        if not logged_in_user:
+            return self.redirect('/login') # Redireciona se não estiver logado
+        # ---------------------------
+
         users = self.user_service.get_all()
-        return self.render('users', users=users)
+        return self.render('users', users=users, logged_in_user=logged_in_user) # Passa o usuário logado para o template
 
 
     def add_user(self):
+
+        logged_in_user = self.get_logged_in_user()
+        if not logged_in_user:
+            return self.redirect('/login') # Redireciona se não estiver logado
+        
         if request.method == 'GET':
             return self.render('user_form', user=None, action="/users/add")
         else:
@@ -35,6 +49,10 @@ class UserController(BaseController):
 
 
     def edit_user(self, user_id):
+        logged_in_user = self.get_logged_in_user()
+        if not logged_in_user:
+            return self.redirect('/login')
+        
         user = self.user_service.get_by_id(user_id)
         if not user:
             return "Usuário não encontrado"
@@ -48,8 +66,30 @@ class UserController(BaseController):
 
 
     def delete_user(self, user_id):
+        logged_in_user = self.get_logged_in_user()
+        if not logged_in_user:
+            return self.redirect('/login')
+        
         self.user_service.delete_user(user_id)
         self.redirect('/users')
+
+
+    # --- NOVO MÉTODO: do_logout ---
+    def do_logout(self):
+        response.delete_cookie(self.SESSION_COOKIE_NAME, path='/') # Deleta o cookie
+        self.redirect('/login')
+
+    def get_logged_in_user(self):
+        user_id_str = request.get_cookie(self.SESSION_COOKIE_NAME)
+        if user_id_str:
+            try:
+                user_id = int(user_id_str)
+                return self.user_service.get_by_id(user_id)
+            except (ValueError, TypeError):
+                # O cookie existe mas não é um ID válido, limpar o cookie
+                response.delete_cookie(self.SESSION_COOKIE_NAME, path='/')
+                return None
+        return None
 
     def login_form(self):
         # Passa email vazio e mensagem de erro vazia para o template inicialmente
@@ -65,6 +105,7 @@ class UserController(BaseController):
             # Login bem-sucedido!
             # FUTURAMENTE: Aqui você configuraria uma sessão para o usuário (cookies, etc.)
             print(f"Usuário {user.name} logado com sucesso!")
+            response.set_cookie(self.SESSION_COOKIE_NAME, str(user.id), path='/', httponly=True)
             self.redirect('/users') # Redireciona para a lista de usuários ou dashboard
 
         else:

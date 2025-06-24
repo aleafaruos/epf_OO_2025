@@ -1,5 +1,14 @@
 %rebase('layout', title='Usuários')
 
+<div style="text-align: right; padding: 10px;">
+    % if logged_in_user:
+        Bem-vindo(a), {{logged_in_user.name}}!
+        <a href="/logout">Logout</a>
+    % else:
+        Você não está logado. <a href="/login">Fazer Login</a>
+    % endif
+</div>
+
 <section class="users-section">
     <div class="section-header">
         <h1 class="section-title"><i class="fas fa-users"></i> Gestão de Usuários</h1>
@@ -10,7 +19,6 @@
 
     <div class="table-container">
         <table class="styled-table">
-            
             <thead>
                 <tr>
                     <th>ID</th>
@@ -28,13 +36,13 @@
                     <td>{{u.name}}</td>
                     <td><a href="mailto:{{u.email}}">{{u.email}}</a></td>
                     <td>{{u.birthdate}}</td>
-                    
+
                     <td class="actions">
                         <a href="/users/edit/{{u.id}}" class="btn btn-sm btn-edit">
                             <i class="fas fa-edit"></i> Editar
                         </a>
 
-                        <form action="/users/delete/{{u.id}}" method="post" 
+                        <form action="/users/delete/{{u.id}}" method="post"
                               onsubmit="return confirm('Tem certeza?')">
                             <button type="submit" class="btn btn-sm btn-danger">
                                 <i class="fas fa-trash-alt"></i> Excluir
