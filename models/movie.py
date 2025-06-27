@@ -25,5 +25,5 @@ class MovieModel:
             director=data.get('director'),
             year=data.get('year'),
             genre=data.get('genre'),
-            synopsis=data.get('synopsis')
+            synopsis=data.get('synopsi')
         )
