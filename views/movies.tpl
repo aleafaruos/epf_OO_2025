@@ -13,7 +13,8 @@
             
             <thead>
                 <tr>
-                    <th>ID</th>       
+                    <th>ID</th>
+                    <th>Pôster</th>       
                     <th>Título</th>
                     <th>Diretor</th>   
                     <th>Ano</th>       
@@ -23,7 +24,14 @@
             <tbody>
                 % for movie in movies: 
                 <tr>
-                    <td>{{movie.id}}</td>         
+                    <td>{{movie.id}}</td>
+                    <td>
+                        %if movie.poster: 
+                            <img src="{{movie.poster}}" alt="Pôster de {{movie.name}}" style="width: 80px; height: auto; border-radius: 5px;"> 
+                        %else:
+                            <img src="/static/images/no_poster.png" alt="Pôster não disponível" style="width: 80px; height: auto; border-radius: 5px;"> {# Imagem padrão se não tiver pôster #}
+                        %end
+                    </td>         
                     <td>{{movie.name}}</td>       
                     <td>{{movie.diretor}}</td>    
                     <td>{{movie.ano}}</td>        
