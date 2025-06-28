@@ -10,6 +10,7 @@ class movieController(BaseController):
         self.setup_routes()
         self.movie_service = movieService()
         self.api_key = '837d294758fed763def26fe173fc765f' 
+        self.image_base_url = 'https://image.tmdb.org/t/p/w500' 
 
 
     # Rotas movie
@@ -40,10 +41,13 @@ class movieController(BaseController):
                 if movie_ano:
                     movie_ano = movie_ano[:4] # Pega apenas o ano
                 movie_diretor = "Desconhecido (API popular não fornece diretor)" # TMDb popular não retorna diretor diretamente
-
+                poster_path = item.get('poster_path')
+                full_poster = ""
+                if poster_path:
+                    full_poster = f"{self.image_base_url}{poster_path}"
                 # Cria uma instância da sua classe Movie. Isso é útil para consistência com o resto do sistema.
                 # Se Movie não tem um campo 'text' ou outros, ensure que o movies_form.tpl não os espera.
-                movies.append(Movie(id=movie_id, name=movie_name, ano=movie_ano, diretor=movie_diretor))
+                    movies.append(Movie(id=movie_id, name=movie_name, ano=movie_ano, diretor=movie_diretor,poster=full_poster))
 
         except requests.exceptions.RequestException as e:
             # Captura erros de rede ou de status HTTP (ex: 404, 500)
