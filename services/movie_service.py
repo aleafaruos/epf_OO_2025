@@ -16,9 +16,8 @@ class movieService:
         new_id = last_id + 1
         name = request.forms.get('name')
         ano = request.forms.get('ano')
-        diretor = request.forms.get('diretor')
 
-        movie = Movie(id=new_id, name=name, ano=ano, diretor=diretor)
+        movie = Movie(id=new_id, name=name, ano=ano)
         self.movie_model.add_movie(movie)
 
 
@@ -29,11 +28,9 @@ class movieService:
     def edit_movie(self, movie):
         name = request.forms.get('name')
         ano = request.forms.get('ano')
-        diretor = request.forms.get('diretor')
 
         movie.name = name
         movie.ano = ano
-        movie.diretor = diretor
 
         self.movie_model.update_movie(movie)
 

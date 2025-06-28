@@ -6,17 +6,21 @@ from typing import List
 DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data')
 
 class Movie:
-    def __init__(self, id, name, ano, diretor, poster):
+    def __init__(self, id, name, ano, poster,resumo:str='',avaliacao_media:float=0.0,numero_votos:int=0,popularidade:float=0.0 ):
+        
         self.id = id
         self.name = name
         self.ano = ano 
-        self.diretor = diretor
         self.poster = poster
+        self.resumo = resumo
+        self.avaliacao_media=avaliacao_media
+        self.numero_votos=numero_votos
+        self.popularidade=popularidade
+
 
 
     def __repr__(self):
-        return (f"movie(id={self.id}, name='{self.name}', ano='{self.ano}', poster='{self.poster}', "
-                f"diretor='{self.diretor}'")
+        return (f"Movie(id={self.id}, name='{self.name}', ano='{self.ano}', poster='{self.poster}', " f"resumo='{self.resumo[:30]}...',"f"avaliacao_media={self.avaliacao_media}, numero_votos={self.numero_votos},"f"popularidade={self.popularidade})")
 
 
     def to_dict(self):
@@ -24,8 +28,12 @@ class Movie:
             'id': self.id,
             'name': self.name,
             'ano': self.ano,
-            'diretor': self.diretor,
-            "poster": self.poster
+            'poster': self.poster,
+            'resumo':self.resumo,
+            'avaliacao_media':self.avaliacao_media,
+            'numero_votos':self.numero_votos,
+            'popularidade':self.popularidade
+
         }
 
 
@@ -35,8 +43,11 @@ class Movie:
             id=data['id'],
             name=data['name'],
             ano=data['ano'],
-            diretor=data['diretor'],
-            poster=data.get('poster')
+            poster=data.get('poster', ''),                # CORRIGIDO: de data.get['poster'] para data.get('poster', '')
+            resumo=data.get('resumo', ''),                # CORRIGIDO: de data.get['resumo'] para data.get('resumo', '')
+            avaliacao_media=data.get('avaliacao_media', 0.0), # CORRIGIDO
+            numero_votos=data.get('numero_votos', 0),     # CORRIGIDO
+            popularidade=data.get('popularidade', 0.0)
         )
 
 
@@ -49,6 +60,17 @@ class movieModel:
 
     def _load(self):
         if not os.path.exists(self.FILE_PATH):
+            return [] # Retorna lista vazia se o arquivo não existe
+
+        try:
+            with open(self.FILE_PATH, 'r', encoding='utf-8') as f:
+                raw_movies_data = json.load(f)
+                return [Movie.from_dict(item) for item in raw_movies_data]
+        except json.JSONDecodeError: # ADICIONADO: Tratamento para JSON vazio ou corrompido
+            print(f"Erro ao decodificar JSON em {self.FILE_PATH}. O arquivo pode estar vazio ou corrompido. Retornando lista vazia.")
+            return []
+        except Exception as e: # ADICIONADO: Tratamento para outros erros de carregamento
+            print(f"Erro inesperado ao carregar filmes de {self.FILE_PATH}: {e}")
             return []
         with open(self.FILE_PATH, 'r', encoding='utf-8') as f:
             raw_movies_data = json.load(f) # Renomeei para evitar conflito com 'data' no loop
@@ -57,6 +79,7 @@ class movieModel:
 
 
     def _save(self):
+        os.makedirs(os.path.dirname(self.FILE_PATH), exist_ok=True)
         with open(self.FILE_PATH, 'w', encoding='utf-8') as f:
             json.dump([u.to_dict() for u in self.movies], f, indent=4, ensure_ascii=False)
 

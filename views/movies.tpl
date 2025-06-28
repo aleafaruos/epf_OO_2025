@@ -16,8 +16,13 @@
                     <th>ID</th>
                     <th>Pôster</th>       
                     <th>Título</th>
-                    <th>Diretor</th>   
-                    <th>Ano</th>       
+                       
+                    <th>Ano</th>
+                    <th>resumo</th>
+                    <th>avaliação</th>
+                    <th>votos</th>
+                    <th>popularidade</th>
+                    <th>ações</th>       
                 </tr>
             </thead>
 
@@ -29,19 +34,31 @@
                         %if movie.poster: 
                             <img src="{{movie.poster}}" alt="Pôster de {{movie.name}}" style="width: 80px; height: auto; border-radius: 5px;"> 
                         %else:
-                            <img src="/static/images/no_poster.png" alt="Pôster não disponível" style="width: 80px; height: auto; border-radius: 5px;"> {# Imagem padrão se não tiver pôster #}
+                            <img src="/static/images/no_poster.png" alt="Pôster não disponível" style="width: 80px; height: auto; border-radius: 5px;">
                         %end
                     </td>         
                     <td>{{movie.name}}</td>       
-                    <td>{{movie.diretor}}</td>    
-                    <td>{{movie.ano}}</td>        
+                        
+                    <td>{{movie.ano}}</td>  
+                    <td style="max-width: 250px; text-align: left;"> 
+                        %if movie.resumo:
+                            <p title="{{movie.resumo}}">
+                                {{movie.resumo[:150]}}... 
+                            </p>
+                        %else:
+                            <p>N/A</p>
+                        %end
+                    </td>
+                    <td>{{'%.1f' % movie.avaliacao_media}}/10</td> 
+                    <td>{{movie.numero_votos}}</td>           
+                    <td>{{'%.2f' % movie.popularidade}}</td>      
                     
                     <td class="actions">
                         <a href="/movies/edit/{{movie.id}}" class="btn btn-sm btn-edit"> 
                             <i class="fas fa-edit"></i> Editar
                         </a>
 
-                        <form action="/movies/delete/{{movie.id}}" method="post" {# Link de exclusão atualizado para movie.id #}
+                        <form action="/movies/delete/{{movie.id}}" method="post" 
                               onsubmit="return confirm('Tem certeza?')">
                             <button type="submit" class="btn btn-sm btn-danger">
                                 <i class="fas fa-trash-alt"></i> Excluir

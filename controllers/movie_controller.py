@@ -40,15 +40,29 @@ class movieController(BaseController):
                 movie_ano = item.get('release_date', '') # TMDb tem 'release_date'
                 if movie_ano:
                     movie_ano = movie_ano[:4] # Pega apenas o ano
-                movie_diretor = "Desconhecido (API popular não fornece diretor)" # TMDb popular não retorna diretor diretamente
                 poster_path = item.get('poster_path')
                 full_poster = ""
                 if poster_path:
                     full_poster = f"{self.image_base_url}{poster_path}"
                 # Cria uma instância da sua classe Movie. Isso é útil para consistência com o resto do sistema.
                 # Se Movie não tem um campo 'text' ou outros, ensure que o movies_form.tpl não os espera.
-                    movies.append(Movie(id=movie_id, name=movie_name, ano=movie_ano, diretor=movie_diretor,poster=full_poster))
+                    movies.append(Movie(id=movie_id, name=movie_name, ano=movie_ano,poster=full_poster))
+                filme_resumo = item.get('overview', '')           # Extrai 'overview' da API para 'filme_resumo'
+                filme_avaliacao_media = item.get('vote_average', 0.0) # Extrai 'vote_average' da API
+                filme_numero_votos = item.get('vote_count', 0)     # Extrai 'vote_count' da API
+                filme_popularidade = item.get('popularity', 0.0)   # Extrai 'popularity' da API
 
+            # Passa todas as informações para o construtor do Movie, usando os NOMES EM PORTUGUÊS dos atributos
+            movies.append(Movie(
+                id=movie_id, 
+                name=movie_name, 
+                ano=movie_ano,
+                poster=full_poster,
+                resumo=filme_resumo,               # Passa a variável 'filme_resumo' para o atributo 'resumo'
+                avaliacao_media=filme_avaliacao_media,   # E assim por diante...
+                numero_votos=filme_numero_votos,
+                popularidade=filme_popularidade
+            ))
         except requests.exceptions.RequestException as e:
             # Captura erros de rede ou de status HTTP (ex: 404, 500)
             print(f"Erro ao conectar ou receber dados da API do TMDb: {e}")
