@@ -6,15 +6,16 @@ from typing import List
 DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data')
 
 class Movie:
-    def __init__(self, id, name, ano, diretor):
+    def __init__(self, id, name, ano, diretor, poster):
         self.id = id
         self.name = name
         self.ano = ano 
         self.diretor = diretor
+        self.poster = poster
 
 
     def __repr__(self):
-        return (f"movie(id={self.id}, name='{self.name}', ano='{self.ano}', "
+        return (f"movie(id={self.id}, name='{self.name}', ano='{self.ano}', poster='{self.poster}', "
                 f"diretor='{self.diretor}'")
 
 
@@ -23,7 +24,8 @@ class Movie:
             'id': self.id,
             'name': self.name,
             'ano': self.ano,
-            'diretor': self.diretor
+            'diretor': self.diretor,
+            "poster": self.poster
         }
 
 
@@ -33,7 +35,8 @@ class Movie:
             id=data['id'],
             name=data['name'],
             ano=data['ano'],
-            diretor=data['diretor']
+            diretor=data['diretor'],
+            poster=data.get('poster')
         )
 
 
@@ -48,8 +51,9 @@ class movieModel:
         if not os.path.exists(self.FILE_PATH):
             return []
         with open(self.FILE_PATH, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            return [Movie(**item) for item in data]
+            raw_movies_data = json.load(f) # Renomeei para evitar conflito com 'data' no loop
+        # Use from_dict para carregar, pois ele já tem o .get() para 'poster'
+            return [Movie.from_dict(item) for item in raw_movies_data]
 
 
     def _save(self):
