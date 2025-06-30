@@ -43,12 +43,13 @@ class Movie:
             id=data['id'],
             name=data['name'],
             ano=data['ano'],
-            poster=data.get('poster', ''),                # CORRIGIDO: de data.get['poster'] para data.get('poster', '')
-            resumo=data.get('resumo', ''),                # CORRIGIDO: de data.get['resumo'] para data.get('resumo', '')
-            avaliacao_media=data.get('avaliacao_media', 0.0), # CORRIGIDO
-            numero_votos=data.get('numero_votos', 0),     # CORRIGIDO
-            popularidade=data.get('popularidade', 0.0)
-        )
+            poster=data.get('poster', ''),
+            resumo=data.get('resumo', ''),
+            avaliacao_media=float(data.get('avaliacao_media', 0.0)),
+            numero_votos=int(data.get('numero_votos', 0)),
+            popularidade=float(data.get('popularidade', 0.0))
+    )
+
 
 
 class movieModel:
@@ -60,7 +61,7 @@ class movieModel:
 
     def _load(self):
         if not os.path.exists(self.FILE_PATH):
-            return [] # Retorna lista vazia se o arquivo não existe
+            return [] 
 
         try:
             with open(self.FILE_PATH, 'r', encoding='utf-8') as f:
