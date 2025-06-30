@@ -22,64 +22,67 @@ class movieController(BaseController):
 
 
     def list_movies(self):
-        # URL da API do TMDb para filmes populares em português
-        url = f'https://api.themoviedb.org/3/movie/popular?api_key={self.api_key}&language=pt-BR'
+
+        termo_busca = request.query.get('termo_busca', '').strip() 
         
-        movies = [] # Inicializa a lista de filmes
+        all_movies_by_id = {} 
         error_message = None
 
         try:
-            response = requests.get(url)
-            response.raise_for_status() # Lança HTTPError para respostas 4xx/5xx
+            if termo_busca:
+                url_api = f'https://api.themoviedb.org/3/search/movie?api_key={self.api_key}&language=pt-BR&query={termo_busca}'
+            else:
+                url_api = f'https://api.themoviedb.org/3/movie/popular?api_key={self.api_key}&language=pt-BR'
+            
+            response = requests.get(url_api)
+            response.raise_for_status() 
             data = response.json()
             
-            # Adapta os dados da API para o seu modelo Movie (ou para o formato esperado pelo template)
             for item in data.get('results', []):
                 movie_id = item.get('id')
                 movie_name = item.get('title')
-                movie_ano = item.get('release_date', '') # TMDb tem 'release_date'
+                movie_ano = item.get('release_date', '') 
                 if movie_ano:
-                    movie_ano = movie_ano[:4] # Pega apenas o ano
+                    movie_ano = movie_ano[:4] 
                 poster_path = item.get('poster_path')
-                full_poster = ""
-                if poster_path:
-                    full_poster = f"{self.image_base_url}{poster_path}"
-                # Cria uma instância da sua classe Movie. Isso é útil para consistência com o resto do sistema.
-                # Se Movie não tem um campo 'text' ou outros, ensure que o movies_form.tpl não os espera.
-                    movies.append(Movie(id=movie_id, name=movie_name, ano=movie_ano,poster=full_poster))
-                filme_resumo = item.get('overview', '')           # Extrai 'overview' da API para 'filme_resumo'
-                filme_avaliacao_media = item.get('vote_average', 0.0) # Extrai 'vote_average' da API
-                filme_numero_votos = item.get('vote_count', 0)     # Extrai 'vote_count' da API
-                filme_popularidade = item.get('popularity', 0.0)   # Extrai 'popularity' da API
+                full_poster = f"{self.image_base_url}{poster_path}" if poster_path else ""
+                
+                filme_resumo = item.get('overview', '') 
+                filme_avaliacao_media = item.get('vote_average', 0.0)
+                filme_numero_votos = item.get('vote_count', 0)
+                filme_popularidade = item.get('popularity', 0.0)
 
-            # Passa todas as informações para o construtor do Movie, usando os NOMES EM PORTUGUÊS dos atributos
-            movies.append(Movie(
-                id=movie_id, 
-                name=movie_name, 
-                ano=movie_ano,
-                poster=full_poster,
-                resumo=filme_resumo,               # Passa a variável 'filme_resumo' para o atributo 'resumo'
-                avaliacao_media=filme_avaliacao_media,   # E assim por diante...
-                numero_votos=filme_numero_votos,
-                popularidade=filme_popularidade
-            ))
+                movie_obj = Movie(
+                    id=movie_id, 
+                    name=movie_name, 
+                    ano=movie_ano,
+                    poster=full_poster,
+                    resumo=filme_resumo, 
+                    avaliacao_media=filme_avaliacao_media, 
+                    numero_votos=filme_numero_votos,
+                    popularidade=filme_popularidade
+                )
+                all_movies_by_id[movie_id] = movie_obj 
+            
         except requests.exceptions.RequestException as e:
-            # Captura erros de rede ou de status HTTP (ex: 404, 500)
             print(f"Erro ao conectar ou receber dados da API do TMDb: {e}")
             error_message = "Não foi possível carregar os filmes populares da API do TMDb."
-            # Opcional: Se a API falhar, você pode tentar carregar do seu JSON local como fallback
-            # movies = self.movie_service.get_all()
         except KeyError as e:
-            # Captura erros se a estrutura JSON da API for inesperada
             print(f"Erro ao processar dados da API (chave ausente): {e}")
             error_message = "Formato de dados da API inesperado. Tente novamente mais tarde."
         except Exception as e:
-            # Captura outros erros inesperados
             print(f"Ocorreu um erro inesperado: {e}")
             error_message = "Ocorreu um erro inesperado ao carregar os filmes."
 
-        return self.render('movies', movies=movies, error_message=error_message)
+        # Carrega os filmes
+        local_movies = self.movie_service.get_all(termo_busca) 
+        for movie in local_movies:
+            all_movies_by_id[movie.id] = movie 
 
+        movies_to_display = list(all_movies_by_id.values())
+        movies_to_display.sort(key=lambda m: m.name.lower())
+
+        return self.render('movies', movies=movies_to_display, error_message=error_message, termo_busca=termo_busca)
 
 
     def add_movie(self):
@@ -99,7 +102,7 @@ class movieController(BaseController):
         if request.method == 'GET':
             return self.render('movies_form', movie=movie, action=f"/movies/edit/{movie_id}")
         else:
-            # POST - salvar edição
+            
             self.movie_service.edit_movie(movie)
             self.redirect('/movies')
 

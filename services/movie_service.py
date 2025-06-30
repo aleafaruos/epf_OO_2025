@@ -6,9 +6,20 @@ class movieService:
         self.movie_model = movieModel()
 
 
-    def get_all(self):
-        movies = self.movie_model.get_all()
-        return movies
+    def get_all(self, termo_busca: str = None):#tive de modificar aqui também pq tava bugado
+        movies = self.movie_model.get_all() # Pega todos os filmes do modelo
+        
+        if termo_busca:
+            # Se um termo de busca for fornecido, filtra os filmes
+            termo_lower = termo_busca.lower()
+            return [
+                movie for movie in movies 
+                if termo_lower in movie.name.lower() or 
+                   (movie.resumo and termo_lower in movie.resumo.lower()) # Adicionado filtro por resumo também
+            ]
+        else:
+            # Se não houver termo de busca retorna todos os filmes
+            return movies
 
 
     def save(self):
@@ -16,8 +27,13 @@ class movieService:
         new_id = last_id + 1
         name = request.forms.get('name')
         ano = request.forms.get('ano')
+        poster = request.forms.get('poster')
+        resumo = request.forms.get('resumo')
+        avaliacao_media=request.forms.get('avaliacao_media')
+        numero_votos=request.forms.get('numero_votos')
+        popularidade=request.forms.get('popularidade')
 
-        movie = Movie(id=new_id, name=name, ano=ano)
+        movie = Movie(id=new_id, name=name, ano=ano,poster=poster,resumo=resumo, avaliacao_media=avaliacao_media, numero_votos=numero_votos,popularidade=popularidade)
         self.movie_model.add_movie(movie)
 
 

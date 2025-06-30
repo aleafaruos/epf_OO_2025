@@ -3,6 +3,16 @@
 <section class="movies-section">
     <div class="section-header">
         <h1 class="section-name"><i class="fas fa-movies"></i> Gestão de Filmes</h1>
+        
+        <form action="/movies" method="GET" class="search-form">
+            <input type="text" name="termo_busca" placeholder="Buscar filmes por título..." value="{{termo_busca or ''}}">
+            <button type="submit" class="btn btn-secondary">
+                <i class="fas fa-search"></i> Buscar
+            </button>
+            % if termo_busca:
+            <a href="/movies" class="btn btn-outline-secondary btn-clear-search">Limpar Busca</a>
+            % end
+        </form>
         <a href="/movies/add" class="btn btn-primary">
             <i class="fas fa-plus"></i> Novo Filme
         </a>
@@ -16,13 +26,13 @@
                     <th>ID</th>
                     <th>Pôster</th>       
                     <th>Título</th>
-                       
+                        
                     <th>Ano</th>
-                    <th>resumo</th>
-                    <th>avaliação</th>
-                    <th>votos</th>
-                    <th>popularidade</th>
-                    <th>ações</th>       
+                    <th>Resumo</th>
+                    <th>Avaliação Média</th>
+                    <th>Votos</th>
+                    <th>Popularidade</th>
+                    <th>Ações</th>       
                 </tr>
             </thead>
 
@@ -36,7 +46,7 @@
                         %else:
                             <img src="/static/images/no_poster.png" alt="Pôster não disponível" style="width: 80px; height: auto; border-radius: 5px;">
                         %end
-                    </td>         
+                    </td>          
                     <td>{{movie.name}}</td>       
                         
                     <td>{{movie.ano}}</td>  
@@ -50,10 +60,13 @@
                         %end
                     </td>
                     <td>{{'%.1f' % movie.avaliacao_media}}/10</td> 
-                    <td>{{movie.numero_votos}}</td>           
+                    <td>{{movie.numero_votos}}</td>          
                     <td>{{'%.2f' % movie.popularidade}}</td>      
                     
                     <td class="actions">
+                        <a href="/filmes/{{movie.id}}/avaliar" class="btn btn-sm btn-info"> 
+                            <i class="fas fa-star"></i> Avaliar
+                        </a>
                         <a href="/movies/edit/{{movie.id}}" class="btn btn-sm btn-edit"> 
                             <i class="fas fa-edit"></i> Editar
                         </a>
