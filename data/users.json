@@ -21,13 +21,6 @@
         "birthdate": "2012-12-12"
     },
     {
-        "id": 6,
-        "name": "renan",
-        "email": "rena@gmail.com",
-        "senha": "$2b$12$aCRIO8uhB7gM7aJK.Fc3h.0Sajn9rhARhmZgsP2IWTmwJtgMCnVmC",
-        "birthdate": "2021-12-12"
-    },
-    {
         "id": 7,
         "name": "renan",
         "email": "rena@gmail.com",
