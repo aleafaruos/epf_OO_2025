@@ -25,10 +25,6 @@ class UserController(BaseController):
 
         self.app.route('/logout', method='GET', callback=self.do_logout)
         
-        # NOVA ROTA: Página de Perfil do Usuário
-        self.app.route('/profile', method='GET', callback=self.user_profile) # Rota para o perfil
-        self.app.route('/users/<user_id:int>/profile', method='GET', callback=self.user_profile_by_id) # Rota para perfil de outros usuários, se quiser
-
     def list_users(self):
         logged_in_user = self.get_logged_in_user()
         if not logged_in_user:
