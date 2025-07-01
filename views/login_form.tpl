@@ -8,6 +8,8 @@
     % end
 
     <form action="/login" method="post" class="form-container">
+        <input type="hidden" name="next" value="{{next_url or ''}}">
+        
         <div class="form-group">
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required value="{{email or ''}}">
@@ -20,7 +22,8 @@
 
         <div class="form-actions">
             <button type="submit" class="btn-submit">Entrar</button>
-            <a href="/users/add" class="btn-cancel">Criar Conta</a> </div>
+            <a href="/users/add" class="btn-cancel">Criar Conta</a> 
+        </div>
     </form>
 </section>
 

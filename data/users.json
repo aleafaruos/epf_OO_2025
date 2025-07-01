@@ -33,5 +33,12 @@
         "email": "len@gmail.com",
         "senha": "$2b$12$S6q68XJDdqxtaeHbHo2rp..9OU7HOy3KopC1PaK3xxGMp/d.cFP0S",
         "birthdate": "2012-12-12"
+    },
+    {
+        "id": 9,
+        "name": "fer",
+        "email": "fer@gmail.com",
+        "senha": "$2b$12$vlp0QnJKC09rq.CW2T6g7.H4wU2gkAZI77zKEy5ilDfcGQoS14nWO",
+        "birthdate": "2012-12-12"
     }
 ]
