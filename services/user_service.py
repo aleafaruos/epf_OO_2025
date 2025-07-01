@@ -20,6 +20,13 @@ class UserService:
         raw_senha = request.forms.get('senha')
         birthdate = request.forms.get('birthdate')
 
+        existing_users = self.user_model.get_all()
+        for user_obj in existing_users:
+            if user_obj.email == email:
+                # Se o e-mail já existe, levanta uma exceção.
+                # O controlador (UserController) deve capturar isso.
+                raise ValueError(f"O e-mail '{email}' já está em uso. Por favor, escolha outro.")
+
         hashed_senha = bcrypt.hashpw(raw_senha.encode('utf-8'), bcrypt.gensalt(rounds=12)).decode('utf-8')
         user = User(id=new_id, name=name, email=email, birthdate=birthdate, senha=hashed_senha)
         self.user_model.add_user(user)

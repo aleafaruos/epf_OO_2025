@@ -35,10 +35,6 @@ class UserController(BaseController):
 
 
     def add_user(self):
-
-        logged_in_user = self.get_logged_in_user()
-        if not logged_in_user:
-            return self.redirect('/login') # Redireciona se não estiver logado
         
         if request.method == 'GET':
             return self.render('user_form', user=None, action="/users/add")
