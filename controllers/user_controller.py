@@ -1,8 +1,11 @@
-from bottle import Bottle, request, redirect, response
+from bottle import Bottle, request, redirect, response, HTTPError # Importa HTTPError para lidar com 404
+import requests # NOVO: Importa a biblioteca requests para fazer chamadas HTTP externas
+
 from .base_controller import BaseController
 from services.user_service import UserService
-from services.avaliacao_service import AvaliacaoService # Importa AvaliacaoService
+from services.avaliacao_service import AvaliacaoService # Importa AvaliacaoService (corrigido o nome do arquivo se necessário)
 from services.movie_service import movieService # Importa movieService para pegar detalhes dos filmes
+from models.movie import Movie # NOVO: Importa a CLASSE Movie para criar objetos Movie
 
 class UserController(BaseController):
     def __init__(self, app):
@@ -19,11 +22,11 @@ class UserController(BaseController):
         self.app.route('/users/add', method=['GET', 'POST'], callback=self.add_user)
         self.app.route('/users/edit/<user_id:int>', method=['GET', 'POST'], callback=self.edit_user)
         self.app.route('/users/delete/<user_id:int>', method='POST', callback=self.delete_user)
-
         self.app.route('/login', method='GET', callback=self.login_form)
         self.app.route('/login', method='POST', callback=self.do_login)
-
         self.app.route('/logout', method='GET', callback=self.do_logout)
+        self.app.route('/profile', method='GET', callback=self.user_profile)
+        self.app.route('/users/<user_id:int>/profile', method='GET', callback=self.user_profile_by_id)
         
     def list_users(self):
         logged_in_user = self.get_logged_in_user()
@@ -37,7 +40,7 @@ class UserController(BaseController):
         if request.method == 'GET':
             return self.render('user_form', user=None, action="/users/add")
         else:
-            self.user_service.save()
+            self.user_service.save() 
             self.redirect('/users')
 
     def edit_user(self, user_id):
@@ -72,22 +75,15 @@ class UserController(BaseController):
         if user_id_str:
             try:
                 user_id = int(user_id_str)
-                print(f"--- DEBUG VERIFICAÇÃO LOGIN FILMES INICIADO ---") # Adicionado para debug
-                print(f"Cookie 'user_session_id' lido: '{user_id_str}'") # Adicionado para debug
                 user = self.user_service.get_by_id(user_id)
                 if user:
-                    print(f"Usuário encontrado pelo ID do cookie: {user.name}") # Adicionado para debug
-                    print(f"--- DEBUG VERIFICAÇÃO LOGIN FILMES ENCERRADO ---\n") # Adicionado para debug
                     return user
                 else:
-                    print("ID do cookie inválido: Usuário não encontrado no serviço.") # Adicionado para debug
                     response.delete_cookie(self.SESSION_COOKIE_NAME, path='/')
                     return None
             except (ValueError, TypeError):
-                print("Erro ao converter user_id do cookie para int.") # Adicionado para debug
                 response.delete_cookie(self.SESSION_COOKIE_NAME, path='/')
                 return None
-        print("Cookie 'user_session_id' não encontrado ou vazio.") # Adicionado para debug
         return None
 
     def login_form(self):
@@ -124,7 +120,7 @@ class UserController(BaseController):
             print(f"--- DEBUG LOGIN ENCERRADO ---\n")
             return self.render('login_form', email=email, error_message=error)
 
-    # --- NOVO MÉTODO: Página de Perfil do Usuário Logado ---
+    # metodo da Página de Perfil do Usuário Logado ---
     def user_profile(self):
         logged_in_user = self.get_logged_in_user()
         if not logged_in_user:
@@ -136,18 +132,24 @@ class UserController(BaseController):
         # Cria uma lista para armazenar as avaliações com os detalhes do filme
         reviews_with_movie_details = []
         for review in user_reviews:
-            movie = self.movie_service.get_by_id(review.id_filme)
+            movie_from_local_data = self.movie_service.get_by_id(review.id_filme)
+            
             # Se o filme não for encontrado localmente, tenta buscar na API TMDB
-            if not movie:
+            if not movie_from_local_data:
                 try:
-                    api_key = '837d294758fed763def26fe173fc765f' # Use a chave da movieController ou passe por config
-                    image_base_url = 'https://image.tmdb.org/t/p/w500' # Use a URL base da movieController ou passe por config
+                    # Chave da API e URL base devem vir de um arquivo de configuração ou ser passadas.
+                    # Por simplicidade, usando valores fixos por enquanto.
+                    api_key = '837d294758fed763def26fe173fc765f' 
+                    image_base_url = 'https://image.tmdb.org/t/p/w500' 
                     url_api_detail = f'https://api.themoviedb.org/3/movie/{review.id_filme}?api_key={api_key}&language=pt-BR'
-                    response_api = request.get(url_api_detail)
-                    response_api.raise_for_status() 
+                    
+                    # CORREÇÃO CRÍTICA: Usar requests.get() da biblioteca 'requests'
+                    response_api = requests.get(url_api_detail)
+                    response_api.raise_for_status() # Levanta um HTTPError para 4xx/5xx responses
                     data = response_api.json()
 
-                    movie = movie( # Importe Movie de models.movie no topo se usar aqui
+                    # CORREÇÃO: Chamar a CLASSE Movie (com 'M' maiúsculo)
+                    movie_details_from_api = Movie( 
                         id=data.get('id'),
                         name=data.get('title'),
                         ano=data.get('release_date', '')[:4] if data.get('release_date') else '',
@@ -157,67 +159,90 @@ class UserController(BaseController):
                         numero_votos=data.get('vote_count', 0),
                         popularidade=data.get('popularity', 0.0)
                     )
+                    reviews_with_movie_details.append({
+                        'review': review,
+                        'movie': movie_details_from_api
+                    })
+                except requests.exceptions.RequestException as e:
+                    print(f"Erro de requisição ao buscar detalhes do filme {review.id_filme} da API para perfil: {e}")
+                    # Adiciona uma entrada com filme genérico para não quebrar a exibição
+                    reviews_with_movie_details.append({
+                        'review': review,
+                        'movie': Movie(id=review.id_filme, name="Filme Não Encontrado", ano="", poster="", resumo="Detalhes não disponíveis.") 
+                    })
                 except Exception as e:
-                    print(f"Erro ao buscar detalhes do filme {review.id_filme} da API para perfil: {e}")
-                    movie = None # Marca como não encontrado
-
-            if movie:
+                    print(f"Erro inesperado ao processar filme {review.id_filme} da API para perfil: {e}")
+                    reviews_with_movie_details.append({
+                        'review': review,
+                        'movie': Movie(id=review.id_filme, name="Filme Não Encontrado", ano="", poster="", resumo="Detalhes não disponíveis.") 
+                    })
+            else: # Se o filme for encontrado localmente
                 reviews_with_movie_details.append({
                     'review': review,
-                    'movie': movie
+                    'movie': movie_from_local_data
                 })
         
         # Renderiza o template de perfil do usuário
         return self.render('user_profile', 
-                           user=logged_in_user, 
-                           reviews=reviews_with_movie_details)
+                            user=logged_in_user, 
+                            reviews=reviews_with_movie_details)
 
-    # --- NOVO MÉTODO: Página de Perfil de OUTRO Usuário (Opcional) ---
-    # Se você quiser permitir que um usuário veja o perfil de outro
+    #metodo Página de Perfil de OUTRO Usuário (Opcional) ---
     def user_profile_by_id(self, user_id):
-        # Para essa rota, você pode decidir se requer que o usuário esteja logado
-        # ou se é um perfil público. Por segurança, é bom estar logado.
         logged_in_user = self.get_logged_in_user()
         if not logged_in_user:
             return self.redirect(f'/login?next=/users/{user_id}/profile')
 
         target_user = self.user_service.get_by_id(user_id)
         if not target_user:
-            return "Usuário não encontrado."
+            return HTTPError(404, "Usuário não encontrado.") 
 
-        # Pega todas as avaliações feitas por este usuário alvo
         user_reviews = self.avaliacao_service.get_all_avaliacoes_by_user_id(target_user.id)
         
         reviews_with_movie_details = []
         for review in user_reviews:
-            movie = self.movie_service.get_by_id(review.id_filme)
-            if not movie: # Tenta buscar na API se não encontrar localmente
+            movie_from_local_data = self.movie_service.get_by_id(review.id_filme)
+            if not movie_from_local_data: 
                 try:
                     api_key = '837d294758fed763def26fe173fc765f' 
                     image_base_url = 'https://image.tmdb.org/t/p/w500' 
                     url_api_detail = f'https://api.themoviedb.org/3/movie/{review.id_filme}?api_key={api_key}&language=pt-BR'
-                    response_api = request.get(url_api_detail)
+                    
+                    response_api = requests.get(url_api_detail) 
                     response_api.raise_for_status() 
                     data = response_api.json()
-                    movie = movie(
+                    
+                    movie_details_from_api = Movie(
                         id=data.get('id'), name=data.get('title'), ano=data.get('release_date', '')[:4],
                         poster=f"{image_base_url}{data.get('poster_path')}" if data.get('poster_path') else "",
                         resumo=data.get('overview', ''), avaliacao_media=data.get('vote_average', 0.0),
                         numero_votos=data.get('vote_count', 0), popularidade=data.get('popularity', 0.0)
                     )
+                    reviews_with_movie_details.append({
+                        'review': review,
+                        'movie': movie_details_from_api
+                    })
+                except requests.exceptions.RequestException as e:
+                    print(f"Erro de requisição ao buscar detalhes do filme {review.id_filme} da API para perfil de outro usuário: {e}")
+                    reviews_with_movie_details.append({
+                        'review': review,
+                        'movie': Movie(id=review.id_filme, name="Filme Não Encontrado", ano="", poster="", resumo="Detalhes não disponíveis.") 
+                    })
                 except Exception as e:
-                    print(f"Erro ao buscar detalhes do filme {review.id_filme} da API para perfil de outro usuário: {e}")
-                    movie = None
-
-            if movie:
+                    print(f"Erro inesperado ao processar filme {review.id_filme} da API para perfil de outro usuário: {e}")
+                    reviews_with_movie_details.append({
+                        'review': review,
+                        'movie': Movie(id=review.id_filme, name="Filme Não Encontrado", ano="", poster="", resumo="Detalhes não disponíveis.") 
+                    })
+            else: 
                 reviews_with_movie_details.append({
                     'review': review,
-                    'movie': movie
+                    'movie': movie_from_local_data
                 })
 
         return self.render('user_profile', 
-                           user=target_user, 
-                           reviews=reviews_with_movie_details)
+                            user=target_user, 
+                            reviews=reviews_with_movie_details)
 
 
 user_routes = Bottle()
