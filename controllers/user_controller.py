@@ -1,11 +1,12 @@
+# controllers/user_controller.py
 from bottle import Bottle, request, redirect, response, HTTPError # Importa HTTPError para lidar com 404
-import requests # NOVO: Importa a biblioteca requests para fazer chamadas HTTP externas
+import requests # Importa a biblioteca requests para fazer chamadas HTTP externas
 
 from .base_controller import BaseController
 from services.user_service import UserService
-from services.avaliacao_service import AvaliacaoService # Importa AvaliacaoService (corrigido o nome do arquivo se necessário)
-from services.movie_service import movieService # Importa movieService para pegar detalhes dos filmes
-from models.movie import Movie # NOVO: Importa a CLASSE Movie para criar objetos Movie
+from services.avaliacao_service import AvaliacaoService # Importa AvaliacaoService
+from services.movie_service import movieService # Importa movieService
+from models.movie import Movie # Importa a CLASSE Movie para criar objetos Movie
 
 class UserController(BaseController):
     def __init__(self, app):
@@ -126,66 +127,32 @@ class UserController(BaseController):
         if not logged_in_user:
             return self.redirect('/login?next=/profile') # Redireciona para login se não estiver logado
 
-        # Pega todas as avaliações feitas por este usuário
-        user_reviews = self.avaliacao_service.get_all_avaliacoes_by_user_id(logged_in_user.id)
+        # Pega todas as avaliações feitas por este usuário.
+        # O 'avaliacao_service' agora já retorna uma lista de dicionários,
+        # onde cada item é {'review': Avaliacao_obj, 'movie': Movie_obj}.
+        # Isso já é o formato que o template 'user_profile' espera.
+        reviews_for_template = self.avaliacao_service.get_all_avaliacoes_by_user_id(logged_in_user.id)
         
-        # Cria uma lista para armazenar as avaliações com os detalhes do filme
-        reviews_with_movie_details = []
-        for review in user_reviews:
-            movie_from_local_data = self.movie_service.get_by_id(review.id_filme)
-            
-            # Se o filme não for encontrado localmente, tenta buscar na API TMDB
-            if not movie_from_local_data:
-                try:
-                    # Chave da API e URL base devem vir de um arquivo de configuração ou ser passadas.
-                    # Por simplicidade, usando valores fixos por enquanto.
-                    api_key = '837d294758fed763def26fe173fc765f' 
-                    image_base_url = 'https://image.tmdb.org/t/p/w500' 
-                    url_api_detail = f'https://api.themoviedb.org/3/movie/{review.id_filme}?api_key={api_key}&language=pt-BR'
-                    
-                    # CORREÇÃO CRÍTICA: Usar requests.get() da biblioteca 'requests'
-                    response_api = requests.get(url_api_detail)
-                    response_api.raise_for_status() # Levanta um HTTPError para 4xx/5xx responses
-                    data = response_api.json()
+        # --- LINHAS DE DEBUG: ADICIONE ESTAS 4 LINHAS ---
+        print("\n--- DEBUG: reviews_for_template no user_controller.py ---")
+        print(f"Tipo de reviews_for_template: {type(reviews_for_template)}")
+        if reviews_for_template:
+            print(f"Tipo do primeiro item: {type(reviews_for_template[0])}")
+            if isinstance(reviews_for_template[0], dict):
+                print(f"Chaves do primeiro item: {reviews_for_template[0].keys()}")
+                if 'movie' in reviews_for_template[0] and isinstance(reviews_for_template[0]['movie'], Movie):
+                    print("O primeiro item tem a chave 'movie' e é um objeto Movie!")
+                else:
+                    print("AVISO: O primeiro item NÃO tem a chave 'movie' ou não é um objeto Movie.")
+        else:
+            print("reviews_for_template está vazia.")
+        print("--- FIM DEBUG ---\n")
+        # --- FIM DAS LINHAS DE DEBUG ---
 
-                    # CORREÇÃO: Chamar a CLASSE Movie (com 'M' maiúsculo)
-                    movie_details_from_api = Movie( 
-                        id=data.get('id'),
-                        name=data.get('title'),
-                        ano=data.get('release_date', '')[:4] if data.get('release_date') else '',
-                        poster=f"{image_base_url}{data.get('poster_path')}" if data.get('poster_path') else "",
-                        resumo=data.get('overview', ''),
-                        avaliacao_media=data.get('vote_average', 0.0),
-                        numero_votos=data.get('vote_count', 0),
-                        popularidade=data.get('popularity', 0.0)
-                    )
-                    reviews_with_movie_details.append({
-                        'review': review,
-                        'movie': movie_details_from_api
-                    })
-                except requests.exceptions.RequestException as e:
-                    print(f"Erro de requisição ao buscar detalhes do filme {review.id_filme} da API para perfil: {e}")
-                    # Adiciona uma entrada com filme genérico para não quebrar a exibição
-                    reviews_with_movie_details.append({
-                        'review': review,
-                        'movie': Movie(id=review.id_filme, name="Filme Não Encontrado", ano="", poster="", resumo="Detalhes não disponíveis.") 
-                    })
-                except Exception as e:
-                    print(f"Erro inesperado ao processar filme {review.id_filme} da API para perfil: {e}")
-                    reviews_with_movie_details.append({
-                        'review': review,
-                        'movie': Movie(id=review.id_filme, name="Filme Não Encontrado", ano="", poster="", resumo="Detalhes não disponíveis.") 
-                    })
-            else: # Se o filme for encontrado localmente
-                reviews_with_movie_details.append({
-                    'review': review,
-                    'movie': movie_from_local_data
-                })
-        
         # Renderiza o template de perfil do usuário
         return self.render('user_profile', 
                             user=logged_in_user, 
-                            reviews=reviews_with_movie_details)
+                            reviews=reviews_for_template) # Passe a lista já pronta
 
     #metodo Página de Perfil de OUTRO Usuário (Opcional) ---
     def user_profile_by_id(self, user_id):
@@ -197,52 +164,29 @@ class UserController(BaseController):
         if not target_user:
             return HTTPError(404, "Usuário não encontrado.") 
 
-        user_reviews = self.avaliacao_service.get_all_avaliacoes_by_user_id(target_user.id)
+        # Pega as avaliações para o usuário alvo.
+        # Assim como em user_profile, o retorno já está no formato correto.
+        reviews_for_template = self.avaliacao_service.get_all_avaliacoes_by_user_id(target_user.id)
         
-        reviews_with_movie_details = []
-        for review in user_reviews:
-            movie_from_local_data = self.movie_service.get_by_id(review.id_filme)
-            if not movie_from_local_data: 
-                try:
-                    api_key = '837d294758fed763def26fe173fc765f' 
-                    image_base_url = 'https://image.tmdb.org/t/p/w500' 
-                    url_api_detail = f'https://api.themoviedb.org/3/movie/{review.id_filme}?api_key={api_key}&language=pt-BR'
-                    
-                    response_api = requests.get(url_api_detail) 
-                    response_api.raise_for_status() 
-                    data = response_api.json()
-                    
-                    movie_details_from_api = Movie(
-                        id=data.get('id'), name=data.get('title'), ano=data.get('release_date', '')[:4],
-                        poster=f"{image_base_url}{data.get('poster_path')}" if data.get('poster_path') else "",
-                        resumo=data.get('overview', ''), avaliacao_media=data.get('vote_average', 0.0),
-                        numero_votos=data.get('vote_count', 0), popularidade=data.get('popularity', 0.0)
-                    )
-                    reviews_with_movie_details.append({
-                        'review': review,
-                        'movie': movie_details_from_api
-                    })
-                except requests.exceptions.RequestException as e:
-                    print(f"Erro de requisição ao buscar detalhes do filme {review.id_filme} da API para perfil de outro usuário: {e}")
-                    reviews_with_movie_details.append({
-                        'review': review,
-                        'movie': Movie(id=review.id_filme, name="Filme Não Encontrado", ano="", poster="", resumo="Detalhes não disponíveis.") 
-                    })
-                except Exception as e:
-                    print(f"Erro inesperado ao processar filme {review.id_filme} da API para perfil de outro usuário: {e}")
-                    reviews_with_movie_details.append({
-                        'review': review,
-                        'movie': Movie(id=review.id_filme, name="Filme Não Encontrado", ano="", poster="", resumo="Detalhes não disponíveis.") 
-                    })
-            else: 
-                reviews_with_movie_details.append({
-                    'review': review,
-                    'movie': movie_from_local_data
-                })
+        # --- LINHAS DE DEBUG: ADICIONE ESTAS 4 LINHAS TAMBÉM AQUI ---
+        print("\n--- DEBUG: reviews_for_template no user_profile_by_id ---")
+        print(f"Tipo de reviews_for_template: {type(reviews_for_template)}")
+        if reviews_for_template:
+            print(f"Tipo do primeiro item: {type(reviews_for_template[0])}")
+            if isinstance(reviews_for_template[0], dict):
+                print(f"Chaves do primeiro item: {reviews_for_template[0].keys()}")
+                if 'movie' in reviews_for_template[0] and isinstance(reviews_for_template[0]['movie'], Movie):
+                    print("O primeiro item tem a chave 'movie' e é um objeto Movie!")
+                else:
+                    print("AVISO: O primeiro item NÃO tem a chave 'movie' ou não é um objeto Movie.")
+        else:
+            print("reviews_for_template está vazia.")
+        print("--- FIM DEBUG ---\n")
+        # --- FIM DAS LINHAS DE DEBUG ---
 
         return self.render('user_profile', 
                             user=target_user, 
-                            reviews=reviews_with_movie_details)
+                            reviews=reviews_for_template)
 
 
 user_routes = Bottle()

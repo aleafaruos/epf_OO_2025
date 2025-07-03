@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meu App de Filmes</title>
-    </head>
+</head>
 <body>
     <header>
         <nav>
@@ -19,7 +19,7 @@
         <hr>
     </header>
     <main>
-    
+
     <h1>Perfil de {{user.name}}</h1>
     <p>Email: {{user.email}}</p>
 
@@ -28,12 +28,19 @@
     <ul>
     % for item in reviews:
         <li>
-            <strong>Filme:</strong> <a href="/filmes/{{item.movie.id}}/avaliar">{{item.movie.name}} ({{item.movie.ano}})</a> <br>
-            <strong>Nota:</strong> {{item.review.nota}} <br>
-            <strong>Comentário:</strong> {{item.review.comentario}}
-            % if item.movie.poster:
-                <br><img src="{{item.movie.poster}}" alt="Poster de {{item.movie.name}}" style="width: 100px; height: auto;">
+            <strong>Filme:</strong> 
+            <a href="/filmes/{{item['movie'].id}}/avaliar">{{item['movie'].name}} ({{item['movie'].ano}})</a> <br>
+            
+            <strong>Nota:</strong> {{item['review'].avaliacao}} <br>
+            <strong>Comentário:</strong> {{item['review'].comentario_texto}}
+            
+            % if item['movie'].poster:
+                <br><img src="{{item['movie'].poster}}" alt="Poster de {{item['movie'].name}}" style="width: 100px; height: auto;">
             % end
+            
+            <p style="font-size: 0.8em; color: #666;">
+                Avaliado por: {{item['review'].user_name}} em {{item['review'].timestamp.split('T')[0]}}
+            </p>
         </li>
     % end
     </ul>

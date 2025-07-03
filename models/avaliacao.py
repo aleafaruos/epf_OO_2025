@@ -1,97 +1,108 @@
+# models/avaliacao.py
 import json
 import os
-# from dataclasses import dataclass, asdict # Provavelmente não estava sendo usado
+from datetime import datetime # Importe datetime para usar timestamps
 
+# Diretório base para dados
 DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data')
+# Caminho para o arquivo de dados dos filmes
+MOVIE_DATA_FILE = os.path.join(DATA_DIR, 'movies.json')
 
 class Avaliacao:
-    def __init__(self, id, nota, nome_usuario, comentario=None): # id pode não ter sido usado ou era manual
-        self.id = id
-        self.nota = nota
-        self.nome_usuario = nome_usuario
-        self.comentario = comentario if comentario is not None else "" # Já garantia que era string
+    # A classe Avaliacao representa um único comentário/avaliação
+    def __init__(self, user_id, user_name, avaliacao, comentario_texto, timestamp=None):
+        self.user_id = user_id
+        self.user_name = user_name
+        self.avaliacao = avaliacao # Este é o valor da nota (ex: 9.0)
+        self.comentario_texto = comentario_texto if comentario_texto is not None else ""
+        self.timestamp = timestamp if timestamp else datetime.now().isoformat()
 
     def __repr__(self):
-        return f"Avaliacao(id={self.id}, nota={self.nota}, nome_usuario='{self.nome_usuario}', comentario='{self.comentario}')"
+        return f"Avaliacao(user_id={self.user_id}, user_name='{self.user_name}', avaliacao={self.avaliacao}, comentario_texto='{self.comentario_texto}', timestamp='{self.timestamp}')"
 
     def to_dict(self):
+        # Converte o objeto Avaliacao para um dicionário, no formato esperado pelo JSON
         return {
-            'id': self.id,
-            'nota': self.nota,
-            'nome_usuario': self.nome_usuario,
-            'comentario': self.comentario
+            'user_id': self.user_id,
+            'user_name': self.user_name,
+            'avaliacao': self.avaliacao,
+            'comentario_texto': self.comentario_texto,
+            'timestamp': self.timestamp
         }
 
     @classmethod
     def from_dict(cls, data):
-        # A forma de carregar 'id' e 'comentario' pode ter sido mais simples
+        # Cria um objeto Avaliacao a partir de um dicionário (geralmente lido do JSON)
         return cls(
-            id=data['id'],
-            nota=data['nota'],
-            nome_usuario=data['nome_usuario'],
-            comentario=data.get('comentario', '') # Pode já estar com get para evitar KeyError
+            user_id=data['user_id'],
+            user_name=data['user_name'],
+            avaliacao=data['avaliacao'],
+            comentario_texto=data.get('comentario_texto', ''),
+            timestamp=data.get('timestamp')
         )
 
 
 class avaliacaoModel:
-    FILE_PATH = os.path.join(DATA_DIR, 'avaliacao.json')
-
+    # Este modelo agora interage DIRETAMENTE com o movies.json para gerenciar avaliações
     def __init__(self):
-        self.avaliacao = self._load() # Note que era 'self.avaliacao' singular
+        self.movies_file_path = MOVIE_DATA_FILE
 
-    def _load(self):
-        if not os.path.exists(self.FILE_PATH):
+    def _load_movies_data(self):
+        # Carrega o JSON dos filmes
+        if not os.path.exists(self.movies_file_path):
             return []
         try:
-            # Pode não ter tido encoding='utf-8' explicitamente, ou tratamento de erro tão robusto
-            with open(self.FILE_PATH, 'r') as f: 
-                data = json.load(f)
-                return [Avaliacao.from_dict(item) for item in data]
-        except json.JSONDecodeError:
-            return [] # Talvez um tratamento simples ou nenhum
-        except FileNotFoundError:
+            with open(self.movies_file_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except (json.JSONDecodeError, FileNotFoundError) as e:
+            print(f"Erro ao carregar movies.json em avaliacaoModel: {e}")
             return []
 
-    def _save(self):
-        # Pode não ter tido encoding='utf-8' explicitamente
-        with open(self.FILE_PATH, 'w') as f:
-            json.dump([a.to_dict() for a in self.avaliacao], f, indent=4)
+    def _save_movies_data(self, data):
+        # Salva o JSON dos filmes
+        with open(self.movies_file_path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
 
+    def get_all_avaliacoes_from_movies(self):
+        # Retorna uma lista de dicionários, onde cada item contém um objeto Avaliacao
+        # e informações básicas do filme ao qual a avaliação pertence.
+        all_movies_data = self._load_movies_data()
+        all_avaliacoes_com_detalhes_filme = []
 
-    def get_all(self):
-        return self.avaliacao
+        for movie_data in all_movies_data:
+            movie_id = movie_data.get('id')
+            movie_name = movie_data.get('name')
+            movie_poster = movie_data.get('poster')
+            movie_ano = movie_data.get('ano')
 
+            for comment_data in movie_data.get('comentarios', []):
+                try:
+                    avaliacao_obj = Avaliacao.from_dict(comment_data)
+                    all_avaliacoes_com_detalhes_filme.append({
+                        'avaliacao': avaliacao_obj,
+                        'movie_id': movie_id,
+                        'movie_name': movie_name,
+                        'movie_poster': movie_poster,
+                        'movie_ano': movie_ano
+                    })
+                except KeyError as e:
+                    print(f"Erro ao carregar avaliação do filme {movie_id}: Chave ausente - {e}. Dados: {comment_data}")
+                except Exception as e:
+                    print(f"Erro inesperado ao processar avaliação do filme {movie_id}: {e}. Dados: {comment_data}")
+        return all_avaliacoes_com_detalhes_filme
 
-    def get_by_id(self, avaliacao_id: int):
-        # Este método era para buscar UMA avaliação pelo seu ID ÚNICO.
-        for a in self.avaliacao:
-            if a.id == avaliacao_id:
-                return a
-        return None
-
-
-    def add_avaliacao(self, avaliacao: Avaliacao):
-        # Nesta versão, o ID era provavelmente esperado vir já setado no objeto avaliacao,
-        # ou a geração era manual/simples, sem garantia de unicidade robusta.
-        self.avaliacao.append(avaliacao)
-        self._save()
-
-
-    def update_user(self, updated_avaliacao: Avaliacao): # Note que era 'update_user' aqui
-        # Esta era a lógica original que você tinha, que foi apontada como problema
-        # porque chamava update_user e não update_avaliacao.
-        for i, avaliacao_item in enumerate(self.avaliacao):
-            if avaliacao_item.id == updated_avaliacao.id:
-                self.avaliacao[i] = updated_avaliacao
-                self._save()
-                return True
-        return False
-
-    def delete_user(self, avaliacao_id: int): # Note que era 'delete_user' aqui
-        # Similarmente, aqui era delete_user.
-        initial_len = len(self.avaliacao)
-        self.avaliacao = [a for a in self.avaliacao if a.id != avaliacao_id]
-        if len(self.avaliacao) < initial_len:
-            self._save()
+    def add_avaliacao_to_movie(self, movie_id, new_avaliacao: Avaliacao):
+        # Adiciona uma nova avaliação a um filme específico.
+        all_movies_data = self._load_movies_data()
+        found = False
+        for movie_data in all_movies_data:
+            if movie_data.get('id') == movie_id:
+                if 'comentarios' not in movie_data:
+                    movie_data['comentarios'] = []
+                movie_data['comentarios'].append(new_avaliacao.to_dict())
+                found = True
+                break
+        if found:
+            self._save_movies_data(all_movies_data)
             return True
         return False

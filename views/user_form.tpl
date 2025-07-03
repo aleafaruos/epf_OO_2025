@@ -1,37 +1,56 @@
-% rebase('layout', title='Formulário Usuário')
-
-<section class="form-section">
-    <h1>{{'Editar Usuário' if user else 'Adicionar Usuário'}}</h1>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu App de Filmes</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/">Home</a> |
+            <a href="/movies">Filmes</a> |
+            % if user:
+                Olá, {{user.name}}! <a href="/profile">Meu Perfil</a> | <a href="/logout">Sair</a>
+            % else:
+                <a href="/login">Login</a>
+            % end
+        </nav>
+        <hr>
+    </header>
+    <main>
     
-    <form action="{{action}}" method="post" class="form-container">
-        <div class="form-group">
-            <label for="name">Nome:</label>
-            <input type="text" id="name" name="name" required 
-                   value="{{user.name if user else ''}}">
-        </div>
-        
-        <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required 
-                   value="{{user.email if user else ''}}">
-        </div>
+    <h1>Perfil de {{user.name}}</h1>
+    <p>Email: {{user.email}}</p>
 
-        <div class="form-group">
-            <label for="senha">Senha:</label>
-            <input type="password" id="senha" name="senha" required
-                   value=""> </div>
+    <h2>Minhas Avaliações</h2>
+    % if reviews:
+    <ul>
+    % for item in reviews:
+        <li>
+            {# Acessando os atributos do OBJETO Movie dentro da chave 'movie' de 'item' #}
+            <strong>Filme:</strong> <a href="/filmes/{{item.movie.id}}/avaliar">{{item.movie.name}} ({{item.movie.ano}})</a> <br>
+            {# Acessando os atributos do OBJETO Avaliacao dentro da chave 'review' de 'item' #}
+            <strong>Nota:</strong> {{item.review.avaliacao}} <br>
+            <strong>Comentário:</strong> {{item.review.comentario_texto}}
+            {# Acessando o poster do OBJETO Movie #}
+            % if item.movie.poster:
+                <br><img src="{{item.movie.poster}}" alt="Poster de {{item.movie.name}}" style="width: 100px; height: auto;">
+            % end
+            {# Opcional: Adicionar o nome do usuário que fez a avaliação e o timestamp #}
+            <p style="font-size: 0.8em; color: #666;">Avaliado por: {{item.review.user_name}} em {{item.review.timestamp.split('T')[0]}}</p>
+        </li>
+    % end
+    </ul>
+    % else:
+    <p>Você ainda não fez nenhuma avaliação.</p>
+    % end
 
-        
-        
-        <div class="form-group">
-            <label for="birthdate">Data de Nascimento:</label>
-            <input type="date" id="birthdate" name="birthdate" required 
-                   value="{{user.birthdate if user else ''}}">
-        </div>
-        
-        <div class="form-actions">
-            <button type="submit" class="btn-submit">Salvar</button>
-            <a href="/users" class="btn-cancel">Voltar</a>
-        </div>
-    </form>
-</section>
+    <p><a href="/movies">Voltar para a lista de filmes</a></p>
+    </main>
+    <footer>
+        <hr>
+        <p>&copy; 2025 Meu App de Filmes. Todos os direitos reservados.</p>
+    </footer>
+</body>
+</html>
