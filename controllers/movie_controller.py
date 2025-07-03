@@ -1,6 +1,6 @@
 # controllers/movie_controller.py
 
-from bottle import Bottle, request, redirect, response, abort, HTTPResponse # Importação única e correta
+from bottle import Bottle, request, redirect, response, abort, HTTPResponse
 from .base_controller import BaseController
 from services.movie_service import movieService
 from models.movie import Movie
@@ -10,16 +10,16 @@ from services.api_service import TMDBService
 
 class movieController(BaseController):
     def __init__(self, app):
-        self.user_service = UserService() 
-        self.SESSION_COOKIE_NAME = 'user_session_id' 
+        self.user_service = UserService()
+        self.SESSION_COOKIE_NAME = 'user_session_id'
 
         super().__init__(app)
 
         self.setup_routes()
         self.movie_service = movieService()
         self.tmdb_service = TMDBService()
-        self.api_key = '837d294758fed763def26fe173fc765f' 
-        self.image_base_url = 'https://image.tmdb.org/t/p/w500' 
+        self.api_key = '837d294758fed763def26fe173fc765f'
+        self.image_base_url = 'https://image.tmdb.org/t/p/w500'
 
 
     def setup_routes(self):
@@ -33,14 +33,14 @@ class movieController(BaseController):
 
     def list_movies(self):
         self.check_auth()
-        termo_busca = request.query.get('termo_busca', '').strip() 
-        
-        all_movies_by_id = {} 
+        termo_busca = request.query.get('termo_busca', '').strip()
+
+        all_movies_by_id = {}
         error_message = None
 
-        local_movies = self.movie_service.get_all() 
+        local_movies = self.movie_service.get_all()
         for movie in local_movies:
-            all_movies_by_id[movie.id] = movie 
+            all_movies_by_id[movie.id] = movie
 
         try:
             movies_from_api_raw = []
@@ -51,11 +51,11 @@ class movieController(BaseController):
 
             for item_data in movies_from_api_raw:
                 movie_id = item_data.get('id')
-                
+
                 if movie_id:
                     processed_movie = self.movie_service.save_or_get_movie(item_data)
-                    all_movies_by_id[processed_movie.id] = processed_movie 
-            
+                    all_movies_by_id[processed_movie.id] = processed_movie
+
         except requests.exceptions.RequestException as e:
             print(f"Erro ao conectar ou receber dados da API do TMDb: {e}")
             error_message = "Não foi possível carregar filmes da API do TMDb."
@@ -85,7 +85,7 @@ class movieController(BaseController):
         if request.method == 'GET':
             return self.render('movies_form', movie=None, action="/movies/add")
         else:
-            self.movie_service.save() 
+            self.movie_service.save()
             self.redirect('/movies')
 
 
@@ -120,7 +120,7 @@ class movieController(BaseController):
                     print(f"Usuário encontrado pelo ID do cookie: {user.name}")
                 else:
                     print("ID do cookie inválido: Usuário não encontrado no serviço.")
-                    response.delete_cookie(self.SESSION_COOKIE_NAME, path='/') 
+                    response.delete_cookie(self.SESSION_COOKIE_NAME, path='/')
                 print(f"--- DEBUG VERIFICAÇÃO LOGIN FILMES ENCERRADO ---\n")
                 return user
             except (ValueError, TypeError):
@@ -139,16 +139,16 @@ class movieController(BaseController):
 
     def evaluate_movie(self, movie_id):
         print("\n--- DEBUG: evaluate_movie INICIADO (Versão 2025-07-03 - REVISÃO FINAL DE REPLACE) ---")
-        logged_in_user = self._get_logged_in_user() 
+        logged_in_user = self._get_logged_in_user()
         if not logged_in_user:
-            return self.redirect(f'/login?next=/filmes/{movie_id}/avaliar') 
-            
+            return self.redirect(f'/login?next=/filmes/{movie_id}/avaliar')
+
         movie = self.movie_service.get_by_id(movie_id)
 
         if not movie:
             try:
                 movie_data_from_api = self.tmdb_service.get_movie_details(movie_id)
-                
+
                 if movie_data_from_api:
                     movie = self.movie_service.save_or_get_movie(movie_data_from_api)
                 else:
@@ -161,24 +161,25 @@ class movieController(BaseController):
                 print(f"Erro inesperado ao processar dados do filme {movie_id} da API: {e}")
                 return "Ocorreu um erro inesperado ao carregar os detalhes do filme."
 
-        if not movie: 
+        if not movie:
             return "Filme não encontrado para avaliação."
-            
+
         if request.method == 'GET':
+            print(f"DEBUG: Objeto movie para renderizar formulário GET: {movie.__dict__}")
             return self.render('evaluate_movie_form', movie=movie)
-        
+
         else: # POST
             try:
-                valor_do_form = request.forms.get('avaliacao') 
+                valor_do_form = request.forms.get('avaliacao')
                 print(f"DEBUG: Valor recebido do formulário: '{valor_do_form}' (type: {type(valor_do_form)})")
-                
+
                 if valor_do_form is None or str(valor_do_form).strip() == '':
                     raise ValueError("Avaliação não pode ser vazia.")
-                
-                string_para_processar = str(valor_do_form) 
+
+                string_para_processar = str(valor_do_form)
                 print(f"DEBUG: String para processar (após str()): '{string_para_processar}' (type: {type(string_para_processar)})")
 
-                valor_final_string = string_para_processar.replace(',', '.') 
+                valor_final_string = string_para_processar.replace(',', '.')
                 print(f"DEBUG: Valor após replace: '{valor_final_string}' (type: {type(valor_final_string)})")
 
                 nova_avaliacao = float(valor_final_string)
@@ -187,21 +188,25 @@ class movieController(BaseController):
                 if not (0 <= nova_avaliacao <= 10):
                     raise ValueError("Avaliação deve ser entre 0 e 10.")
 
-                comentario = request.forms.get('comentario', '') 
-                self.movie_service.update_movie_rating(movie.id, nova_avaliacao, comentario) 
+                # ALTERAÇÃO AQUI: Estamos passando uma tupla (comentário, usuário) para o service
+                comentario_texto = request.forms.get('comentario', '').strip()
+                if comentario_texto: # Adiciona o comentário apenas se não for vazio
+                    comentario_data = (comentario_texto, logged_in_user.name) # Tupla: (texto do comentário, nome do usuário)
+                else:
+                    comentario_data = None # Ou pode passar uma tupla vazia, dependendo de como o service vai lidar
 
-                # Alteração 1: Usando abort(redirect(...))
+                self.movie_service.update_movie_rating(movie.id, logged_in_user.id, nova_avaliacao, comentario_data)
+
                 abort(redirect(f'/movies?message=Filme {movie.name} avaliado com sucesso!'))
             except ValueError as ve:
                 print(f"ERRO DE VALIDAÇÃO AO AVALIAR FILME: {ve}")
                 return self.render('evaluate_movie_form', movie=movie, error_message=f"Erro de validação: {ve}")
             except Exception as e:
-                # Alteração 2: Trata HTTPResponse especificamente, re-lançando-o
                 if isinstance(e, HTTPResponse):
                     print(f"DEBUG: HTTPResponse capturada, re-lançando para o Bottle: {e}")
                     raise e
                 else:
-                    print(f"ERRO INESPERADO AO AVALIAR FILME: [Tipo: {type(e).__name__}, Mensagem: '{e}']") 
+                    print(f"ERRO INESPERADO AO AVALIAR FILME: [Tipo: {type(e).__name__}, Mensagem: '{e}']")
                     return self.render('evaluate_movie_form', movie=movie, error_message=f"Ocorreu um erro ao salvar sua avaliação: {e}")
 
 movie_routes = Bottle()

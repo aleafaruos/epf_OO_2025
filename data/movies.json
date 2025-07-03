@@ -8,7 +8,7 @@
         "avaliacao_media": 7.6,
         "numero_votos": 482,
         "popularidade": 665.728,
-        "comentario": "f",
+        "comentarios": [],
         "original_name": "Ballerina",
         "release_date": "2025-06-04",
         "genre_ids": [],
@@ -27,7 +27,7 @@
         "avaliacao_media": 7.5,
         "numero_votos": 1377,
         "popularidade": 631.3592,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "Thunderbolts*",
         "release_date": "2025-04-30",
         "genre_ids": [
@@ -50,7 +50,7 @@
         "avaliacao_media": 7.199,
         "numero_votos": 1455,
         "popularidade": 452.5164,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "Final Destination Bloodlines",
         "release_date": "2025-05-14",
         "genre_ids": [
@@ -72,7 +72,7 @@
         "avaliacao_media": 6.255,
         "numero_votos": 49,
         "popularidade": 341.3322,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "The Old Guard 2",
         "release_date": "2025-07-01",
         "genre_ids": [
@@ -94,7 +94,7 @@
         "avaliacao_media": 7.099,
         "numero_votos": 770,
         "popularidade": 331.5416,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "Lilo & Stitch",
         "release_date": "2025-05-17",
         "genre_ids": [
@@ -118,7 +118,7 @@
         "avaliacao_media": 5.615,
         "numero_votos": 26,
         "popularidade": 273.1267,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "First Shift",
         "release_date": "2024-08-30",
         "genre_ids": [
@@ -141,7 +141,7 @@
         "avaliacao_media": 8.6,
         "numero_votos": 376,
         "popularidade": 258.7065,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "KPop Demon Hunters",
         "release_date": "2025-06-20",
         "genre_ids": [
@@ -166,7 +166,7 @@
         "avaliacao_media": 7.688,
         "numero_votos": 406,
         "popularidade": 256.3747,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "F1",
         "release_date": "2025-06-25",
         "genre_ids": [
@@ -188,7 +188,7 @@
         "avaliacao_media": 7.9,
         "numero_votos": 520,
         "popularidade": 255.0993,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "How to Train Your Dragon",
         "release_date": "2025-06-06",
         "genre_ids": [
@@ -211,7 +211,7 @@
         "avaliacao_media": 8.0,
         "numero_votos": 36,
         "popularidade": 246.1378,
-        "comentario": "foda",
+        "comentarios": [],
         "original_name": "Heads of State",
         "release_date": "2025-06-24",
         "genre_ids": [
@@ -234,7 +234,7 @@
         "avaliacao_media": 5.867,
         "numero_votos": 49,
         "popularidade": 215.7918,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "The Twisters",
         "release_date": "2024-06-28",
         "genre_ids": [
@@ -257,7 +257,7 @@
         "avaliacao_media": 6.838,
         "numero_votos": 77,
         "popularidade": 243.2838,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "Jurassic World Rebirth",
         "release_date": "2025-07-01",
         "genre_ids": [
@@ -280,7 +280,7 @@
         "avaliacao_media": 6.783,
         "numero_votos": 23,
         "popularidade": 237.2731,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "Ice Road: Vengeance",
         "release_date": "2025-06-27",
         "genre_ids": [
@@ -303,7 +303,7 @@
         "avaliacao_media": 6.4,
         "numero_votos": 151,
         "popularidade": 187.4561,
-        "comentario": "l",
+        "comentarios": [],
         "original_name": "Distant",
         "release_date": "2024-07-12",
         "genre_ids": [
@@ -326,7 +326,7 @@
         "avaliacao_media": 8.496,
         "numero_votos": 414,
         "popularidade": 192.1556,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "오징어 게임: 시즌2 제작 이야기",
         "release_date": "2025-01-02",
         "genre_ids": [
@@ -347,7 +347,7 @@
         "avaliacao_media": 6.25,
         "numero_votos": 20,
         "popularidade": 166.1571,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "Kuang Bao Ju Xi",
         "release_date": "2024-03-27",
         "genre_ids": [
@@ -370,7 +370,7 @@
         "avaliacao_media": 7.0,
         "numero_votos": 79,
         "popularidade": 182.7447,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "Bring Her Back",
         "release_date": "2025-05-28",
         "genre_ids": [
@@ -391,7 +391,7 @@
         "avaliacao_media": 7.2,
         "numero_votos": 448,
         "popularidade": 171.8416,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "28 Years Later",
         "release_date": "2025-06-18",
         "genre_ids": [
@@ -414,7 +414,7 @@
         "avaliacao_media": 5.968,
         "numero_votos": 63,
         "popularidade": 178.451,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "The Ritual",
         "release_date": "2025-05-27",
         "genre_ids": [
@@ -435,7 +435,7 @@
         "avaliacao_media": 6.7,
         "numero_votos": 20,
         "popularidade": 140.13,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "鬼吹灯：献王虫谷",
         "release_date": "2023-09-22",
         "genre_ids": [
@@ -458,7 +458,7 @@
         "avaliacao_media": 6.625,
         "numero_votos": 24,
         "popularidade": 0.7287,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "Moana",
         "release_date": "2009-11-01",
         "genre_ids": [
@@ -480,7 +480,7 @@
         "avaliacao_media": 7.568,
         "numero_votos": 13162,
         "popularidade": 3.5428,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "Moana",
         "release_date": "2016-10-13",
         "genre_ids": [
@@ -504,7 +504,7 @@
         "avaliacao_media": 0.0,
         "numero_votos": 0,
         "popularidade": 2.8234,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "Moana",
         "release_date": "2026-07-09",
         "genre_ids": [
@@ -528,7 +528,7 @@
         "avaliacao_media": 6.6,
         "numero_votos": 34,
         "popularidade": 0.3429,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "Moana",
         "release_date": "1926-01-07",
         "genre_ids": [
@@ -549,7 +549,7 @@
         "avaliacao_media": 1.1,
         "numero_votos": 2520,
         "popularidade": 65.6652,
-        "comentario": "f",
+        "comentarios": [],
         "original_name": "Moana 2",
         "release_date": "2024-11-21",
         "genre_ids": [
@@ -573,7 +573,7 @@
         "avaliacao_media": 9.2,
         "numero_votos": 3,
         "popularidade": 0.1783,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "Moananuiākea: One Ocean, One People, One Canoe",
         "release_date": "2018-11-18",
         "genre_ids": [
@@ -594,7 +594,7 @@
         "avaliacao_media": 9.7,
         "numero_votos": 3,
         "popularidade": 0.0438,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "Moana double face",
         "release_date": "2015-08-12",
         "genre_ids": [
@@ -615,7 +615,7 @@
         "avaliacao_media": 7.0,
         "numero_votos": 1,
         "popularidade": 0.1271,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "Les Quatre Du Moana",
         "release_date": "1959-01-01",
         "genre_ids": [
@@ -636,7 +636,7 @@
         "avaliacao_media": 7.5,
         "numero_votos": 1,
         "popularidade": 0.153,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "La Grande Savana",
         "release_date": "1955-12-22",
         "genre_ids": [
@@ -657,7 +657,7 @@
         "avaliacao_media": 8.5,
         "numero_votos": 1,
         "popularidade": 0.0404,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "Moana Jackson: Portrait of a quiet revolutionary",
         "release_date": "",
         "genre_ids": [],
@@ -674,9 +674,24 @@
         "poster": "https://image.tmdb.org/t/p/w500//8wiW6AEISe9KSveSNl2n4MM7Z4s.jpg",
         "resumo": "Blamed for a crime they did not commit, five young men in 1930s Hawai’i must consider their futures and their families as they weigh the consequences of taking action.",
         "avaliacao_media": 9.0,
-        "numero_votos": 1,
+        "numero_votos": 2,
         "popularidade": 0.3215,
-        "comentario": "pikachu",
+        "comentarios": [
+            {
+                "user_id": 9,
+                "user_name": "fer",
+                "avaliacao": 9.0,
+                "comentario_texto": "F",
+                "timestamp": "2025-07-03T19:00:00Z"
+            },
+            {
+                "user_id": 5,
+                "user_name": "teteu",
+                "avaliacao": 9.0,
+                "comentario_texto": "lemas",
+                "timestamp": "2025-07-03T19:00:00Z"
+            }
+        ],
         "original_name": "Ala Moana Boys",
         "release_date": "2022-07-11",
         "genre_ids": [
@@ -698,7 +713,7 @@
         "avaliacao_media": 10.0,
         "numero_votos": 1,
         "popularidade": 0.0,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "Moana Sing-Along",
         "release_date": "",
         "genre_ids": [],
@@ -717,7 +732,7 @@
         "avaliacao_media": 0.0,
         "numero_votos": 0,
         "popularidade": 0.0,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "Moana Collection",
         "release_date": "N/A",
         "genre_ids": [],
@@ -736,7 +751,7 @@
         "avaliacao_media": 0.0,
         "numero_votos": 0,
         "popularidade": 0.3028,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "Mana Moana Mana Tangata",
         "release_date": "2025-07-13",
         "genre_ids": [
@@ -757,7 +772,7 @@
         "avaliacao_media": 0.0,
         "numero_votos": 0,
         "popularidade": 0.0311,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "Te Herenga Tāngata - Te Moana-a-Toi",
         "release_date": "2023-11-29",
         "genre_ids": [
@@ -778,7 +793,7 @@
         "avaliacao_media": 5.762,
         "numero_votos": 21,
         "popularidade": 11.0105,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "Provocazione",
         "release_date": "1988-11-25",
         "genre_ids": [
@@ -799,7 +814,7 @@
         "avaliacao_media": 6.468,
         "numero_votos": 1984,
         "popularidade": 148.0052,
-        "comentario": "",
+        "comentarios": [],
         "original_name": "A Minecraft Movie",
         "release_date": "2025-03-31",
         "genre_ids": [
