@@ -690,7 +690,7 @@
         "poster": "https://image.tmdb.org/t/p/w500//8wiW6AEISe9KSveSNl2n4MM7Z4s.jpg",
         "resumo": "Blamed for a crime they did not commit, five young men in 1930s Hawai’i must consider their futures and their families as they weigh the consequences of taking action.",
         "avaliacao_media": 9.0,
-        "numero_votos": 2,
+        "numero_votos": 3,
         "popularidade": 0.3215,
         "comentarios": [
             {
@@ -705,6 +705,13 @@
                 "user_name": "teteu",
                 "avaliacao": 9.0,
                 "comentario_texto": "lemas",
+                "timestamp": "2025-07-03T19:00:00Z"
+            },
+            {
+                "user_id": 11,
+                "user_name": "ca",
+                "avaliacao": 9.0,
+                "comentario_texto": "o melhor",
                 "timestamp": "2025-07-03T19:00:00Z"
             }
         ],

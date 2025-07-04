@@ -1,5 +1,6 @@
 from bottle import static_file
 
+
 class BaseController:
     def __init__(self, app):
         self.app = app
@@ -19,7 +20,7 @@ class BaseController:
         """Redireciona a rota raiz para /users"""
         return self.redirect('/users')
 
-
+    
     def helper(self):
         return self.render('helper-final')
 
@@ -27,6 +28,7 @@ class BaseController:
     def serve_static(self, filename):
         """Serve arquivos estáticos da pasta static/"""
         return static_file(filename, root='./static')
+
 
 
     def render(self, template, **context):

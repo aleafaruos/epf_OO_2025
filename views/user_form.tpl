@@ -1,57 +1,25 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu App de Filmes</title>
-</head>
-<body>
-    <header>
-        <nav>
-            <a href="/">Home</a> |
-            <a href="/movies">Filmes</a> |
-            % if user:
-                Olá, {{user.name}}! <a href="/profile">Meu Perfil</a> | <a href="/logout">Sair</a>
-            % else:
-                <a href="/login">Login</a>
-            % end
-        </nav>
-        <hr>
-    </header>
-    <main>
-        % if user:
-            <h1>Perfil de {{user.name}}</h1>
-            <p>Email: {{user.email}}</p>
+%rebase('layout', title='Cadastro de Usuário')
 
-            <h2>Minhas Avaliações</h2>
-            % if reviews:
-                <ul>
-                % for item in reviews:
-                    <li>
-                        <strong>Filme:</strong> <a href="/filmes/{{item.movie.id}}/avaliar">{{item.movie.name}} ({{item.movie.ano}})</a> <br>
-                        <strong>Nota:</strong> {{item.review.avaliacao}} <br>
-                        <strong>Comentário:</strong> {{item.review.comentario_texto}}
-                        % if item.movie.poster:
-                            <br><img src="{{item.movie.poster}}" alt="Poster de {{item.movie.name}}" style="width: 100px; height: auto;">
-                        % end
-                        <p style="font-size: 0.8em; color: #666;">Avaliado por: {{item.review.user_name}} em {{item.review.timestamp.split('T')[0]}}</p>
-                    </li>
-                % end
-                </ul>
-            % else:
-                <p>Você ainda não fez nenhuma avaliação.</p>
-            % end
-        % else:
-            <h1>Novo Usuário</h1>
-            <p>Você ainda não está logado ou está criando um novo usuário.</p>
-        % end
+<h1>{{'Editar Usuário' if user else 'Novo Usuário'}}</h1>
 
-        <p><a href="/movies">Voltar para a lista de filmes</a></p>
-    </main>
+% if error_message:
+    <p style="color: red;">{{error_message}}</p>
+% end
 
-    <footer>
-        <hr>
-        <p>&copy; 2025 Meu App de Filmes. Todos os direitos reservados.</p>
-    </footer>
-</body>
-</html>
+<form action="{{action}}" method="post">
+    <label for="name">Nome:</label><br>
+    <input type="text" name="name" value="{{user.name if user else ''}}" required><br><br>
+
+    <label for="email">Email:</label><br>
+    <input type="email" name="email" value="{{user.email if user else ''}}" required><br><br>
+
+    <label for="birthdate">Data de Nascimento:</label><br>
+    <input type="date" name="birthdate" value="{{user.birthdate if user else ''}}" required><br><br>
+
+    <label for="senha">Senha:</label><br>
+    <input type="password" name="senha" required><br><br>
+
+    <button type="submit">{{'Salvar Alterações' if user else 'Cadastrar'}}</button>
+</form>
+
+<p><a href="/users">Voltar</a></p>

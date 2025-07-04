@@ -1,7 +1,5 @@
 # controllers/user_controller.py
 from bottle import Bottle, request, redirect, response, HTTPError # Importa HTTPError para lidar com 404
-import requests # Importa a biblioteca requests para fazer chamadas HTTP externas
-
 from .base_controller import BaseController
 from services.user_service import UserService
 from services.avaliacao_service import AvaliacaoService # Importa AvaliacaoService
@@ -34,15 +32,32 @@ class UserController(BaseController):
         if not logged_in_user:
             return self.redirect('/login')
         
+    def set_logged_in_user_cookie(self, user_id):
+        response.set_cookie("user_session_id", str(user_id), path="/")
+
+    def get_logged_in_user(self):
+        user_id = request.get_cookie("user_session_id")
+        if user_id:
+            from services.user_service import UserService
+            return UserService().get_by_id(int(user_id))
+        return None
+
+        
         users = self.user_service.get_all()
         return self.render('users', users=users, logged_in_user=logged_in_user)
 
     def add_user(self):
         if request.method == 'GET':
-            return self.render('user_form', user=None, action="/users/add")
+            return self.render('user_form', user=None, action="/users/add", error_message='')
         else:
-            self.user_service.save() 
-            self.redirect('/users')
+            try:
+                self.user_service.save()  # chama sem argumentos, o método save lê do request.forms internamente
+                return self.redirect('/users')
+            except ValueError as e:
+                return self.render('user_form', user=None, action="/users/add", error_message=str(e))
+
+
+
 
     def edit_user(self, user_id):
         logged_in_user = self.get_logged_in_user()
@@ -94,11 +109,24 @@ class UserController(BaseController):
     def do_login(self):
         email = request.forms.get('email')
         raw_password = request.forms.get('senha')
+        next_url = request.forms.get('next')  # Adicionado aqui
 
         print(f"\n--- DEBUG LOGIN INICIADO ---")
         print(f"Tentativa de login para email: {email}")
 
         user = self.user_service.check_credentials(email, raw_password)
+
+        if user:
+            self.set_logged_in_user_cookie(user.id)
+
+            if next_url:
+                return self.redirect(next_url)
+            else:
+                return self.redirect('/profile')
+        else:
+            error = "Email ou senha inválidos."
+            return self.render('login_form', email=email, error_message=error, next_url=next_url)  # Incluído next_url aqui
+
 
         if user:
             print(f"Usuário {user.name} logado com sucesso!")
