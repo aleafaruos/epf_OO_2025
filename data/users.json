@@ -40,5 +40,12 @@
         "email": "fer@gmail.com",
         "senha": "$2b$12$vlp0QnJKC09rq.CW2T6g7.H4wU2gkAZI77zKEy5ilDfcGQoS14nWO",
         "birthdate": "2012-12-12"
+    },
+    {
+        "id": 10,
+        "name": "nin",
+        "email": "nin@gmail.com",
+        "senha": "$2b$12$MGc7lTxmZmaUCNfUA.pp6ez4JZ3k2r6Lpq9xkD79Ffy4eXlhEWLjm",
+        "birthdate": "2012-12-12"
     }
 ]
