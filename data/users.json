@@ -1,53 +1,5 @@
 [
     {
-        "id": 3,
-        "name": "lele",
-        "email": "lele@gmail.com",
-        "senha": "12345",
-        "birthdate": "2002-01-12",
-        "favorites": []
-    },
-    {
-        "id": 4,
-        "name": "meme",
-        "email": "meme@gmail.com",
-        "senha": "$2b$12$Q2HDm6ofvpB89IpLTw5nm.yHw7NMp9eAUPB.sBTFhaLvCXEcWq0wW",
-        "birthdate": "2000-02-01",
-        "favorites": []
-    },
-    {
-        "id": 5,
-        "name": "teteu",
-        "email": "tet@gmail.com",
-        "senha": "$2b$12$cWfthpttWpOVUOpfEZGdFu/fr3xHu6rxUa1dWso7pF4Mfrff9ChSG",
-        "birthdate": "2012-12-12",
-        "favorites": []
-    },
-    {
-        "id": 7,
-        "name": "renan",
-        "email": "rena@gmail.com",
-        "senha": "$2b$12$wiF7qDgEb8M/mHAjSk8KFOgphDchR7tCOoEd.2lKggJcN8SAox/1u",
-        "birthdate": "2021-12-12",
-        "favorites": []
-    },
-    {
-        "id": 8,
-        "name": "lena",
-        "email": "len@gmail.com",
-        "senha": "$2b$12$S6q68XJDdqxtaeHbHo2rp..9OU7HOy3KopC1PaK3xxGMp/d.cFP0S",
-        "birthdate": "2012-12-12",
-        "favorites": []
-    },
-    {
-        "id": 9,
-        "name": "fer",
-        "email": "fer@gmail.com",
-        "senha": "$2b$12$vlp0QnJKC09rq.CW2T6g7.H4wU2gkAZI77zKEy5ilDfcGQoS14nWO",
-        "birthdate": "2012-12-12",
-        "favorites": []
-    },
-    {
         "id": 10,
         "name": "flavia",
         "email": "melorebelato@outlook.com",
@@ -55,7 +7,6 @@
         "birthdate": "2006-01-24",
         "favorites": [
             552524,
-            986056,
             541671,
             574475,
             1090007,
@@ -65,5 +16,21 @@
             846422,
             1100988
         ]
+    },
+    {
+        "id": 11,
+        "name": "luiza",
+        "email": "flaviademelorebelato@outlook.com",
+        "senha": "$2b$12$nQP872Af1uthzVuyoXKh1.EGN2K6Hnaoyiq5IlJJlXJAjy58Sb3/e",
+        "birthdate": "2006-01-24",
+        "favorites": []
+    },
+    {
+        "id": 12,
+        "name": "maria",
+        "email": "maria@gmail.com",
+        "senha": "$2b$12$cFlx56.y9LrnprA2EEqVAOfup4e22/OfUJ6.oWvUdp75CT1z3msDe",
+        "birthdate": "2345-01-24",
+        "favorites": []
     }
 ]

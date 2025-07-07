@@ -21,6 +21,12 @@
         <div class="montage-image"><img src="https://image.tmdb.org/t/p/original/xLxgVxFWvb9hhUyCDDXxRPPnFck.jpg" alt="Pôster"></div>
         <div class="montage-image"><img src="https://image.tmdb.org/t/p/original/ohXr0v9U0TfFu9IXbSDm5zoGV3R.jpg" alt="Pôster"></div>
         <div class="montage-image"><img src="https://image.tmdb.org/t/p/original/9yaVKBwvbvq3qL8zzSmuoxZuoFK.jpg" alt="Pôster"></div>
+        <div class="montage-image"><img src="https://image.tmdb.org/t/p/original/4rxEeTzN1oZPJo1GBoPOnA3NeJv.jpg" alt="Pôster"></div>
+        <div class="montage-image"><img src="https://image.tmdb.org/t/p/original/d74WpIsH8379TIL4wUxDneRCYv2.jpg" alt="Pôster"></div>
+        <div class="montage-image"><img src="https://image.tmdb.org/t/p/original/cKNxg77ll8caX3LulREep4C24Vx.jpg" alt="Pôster"></div>
+        <div class="montage-image"><img src="https://image.tmdb.org/t/p/original/pA70WUs7KHiHltfiBN4XEELOXcS.jpg" alt="Pôster"></div>
+        <div class="montage-image"><img src="https://image.tmdb.org/t/p/original/azm7busQSOm5I0QVR0nff8mC2Jk.jpg" alt="Pôster"></div>
+        <div class="montage-image"><img src="https://image.tmdb.org/t/p/original/8OGQCOp6BxwvekhZBQCzVd77Y6l.jpg" alt="Pôster"></div>
     </div>
 
     <div class="hero-text">
