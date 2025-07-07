@@ -6,30 +6,35 @@ O **CineReviews** é uma aplicação web desenvolvida em Python utilizando o fra
 
 ### Funcionalidades Principais:
 
-* **Cadastro e Autenticação de Usuários:**
-    * Registro de novos usuários com validação de e-mail.
-    * Sistema de login/logout seguro com gerenciamento de sessão.
-    * Páginas de perfil de usuário personalizadas.
-* **Gestão de Filmes:**
-    * Listagem de todos os filmes disponíveis com opções de busca.
-    * Páginas de detalhes para cada filme.
-    * Funcionalidades de adicionar, editar e excluir filmes (para usuários com permissão adequada).
-* **Sistema de Avaliações:**
-    * Usuários logados podem avaliar filmes com notas e comentários.
-    * Visualização das avaliações na página de detalhes do filme e no perfil do usuário.
-* **Listas de Filmes Personalizadas:**
-    * Usuários podem adicionar filmes às listas "Favoritos".
-    * Visualização e gerenciamento dessas listas no perfil do usuário.
-* **Interface Web Customizada:**
-    * Layout responsivo e esteticamente agradável, utilizando Bootstrap para uma experiência de usuário moderna.
+- Autenticação de Usuários: Sistema seguro de cadastro e login com hashing de senhas (bcrypt).
+
+- Consulta de Filmes: Integração com a API do TMDb (The Movie Database) para buscar filmes populares ou pesquisar por títulos específicos.
+
+- Páginas de Detalhes: Visualização completa de informações de um filme, incluindo sinopse, ano de lançamento, pôster e avaliações de outros usuários.
+
+- Sistema de Avaliação: Usuários logados podem dar uma nota (de 1 a 5 estrelas) e deixar um comentário sobre os filmes.
+
+- Lista de Favoritos: Funcionalidade para marcar filmes como favoritos.
+
+- Perfil de Usuário: Página de perfil personalizada que exibe a lista de filmes favoritos e o histórico de avaliações do usuário.
 
 ### Requisitos para Pontuação Extra Adicionais:
 
-* **Relações entre Models:** Implementação de associações entre as classes (ex: um `Usuário` tem muitas `Avaliações` e muitas entradas em `Listas de Filmes`, e um `Filme` tem muitas `Avaliações`).
-* **Implementação de Composição/Agregação:** Utilização de composição/agregação nas models para representar relações complexas entre os dados.
-* **Tratamento de Erros:** Implementação de tratamento de erros robusto para garantir a estabilidade da aplicação.
+Relações entre Models: (Cumprido)
 
----
+- Um usuário pode ter várias avaliações (a classe Avaliacao armazena o id_usuario).
+
+- Um usuário pode ter vários filmes favoritos, e um filme pode ser favoritado por vários usuários (a classe User possui uma lista de favorites com os IDs dos filmes).
+  
+
+Bibliotecas Adicionais:
+
+- Além do Bottle, o projeto utiliza as bibliotecas bcrypt para segurança e requests para consumir a API do TMDb.
+  
+
+Qualidade do Projeto:
+
+- O código está bem organizado, segue as boas práticas da estrutura MVC e inclui tratamento de erros, como nas chamadas de API.
 
 ## Estrutura do Projeto (MVC)
 
@@ -116,8 +121,9 @@ Nosso projeto utiliza as seguintes classes principais para modelagem de dados, c
 
 ### Relações entre Models:
 
-* **Usuário (1) para Avaliação (N)**: Um usuário pode fazer várias avaliações.
-* **Filme (1) para Avaliação (N)**: Um filme pode receber várias avaliações.
+- Um usuário pode ter várias avaliações (a classe Avaliacao armazena o id_usuario).
+
+- Um usuário pode ter vários filmes favoritos, e um filme pode ser favoritado por vários usuários (a classe User possui uma lista de favorites com os IDs dos filmes).
 
 ### Implementação dos 4 Pilares de OO:
 
