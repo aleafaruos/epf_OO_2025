@@ -2,7 +2,7 @@
 
 ## Descrição da Solução e Funcionalidades
 
-O **CineReviews** é uma aplicação web desenvolvida em Python utilizando o framework Bottle, projetada para gerenciar filmes, avaliações e listas personalizadas de usuários. Nosso objetivo é proporcionar uma plataforma intuitiva onde os usuários podem explorar filmes, registrar suas opiniões e organizar suas coleções de "favoritos" e "para assistir mais tarde".
+O **CineReviews** é uma aplicação web desenvolvida em Python utilizando o framework Bottle, projetada para gerenciar filmes, avaliações e listas personalizadas de usuários. 
 
 ### Funcionalidades Principais:
 
@@ -18,7 +18,7 @@ O **CineReviews** é uma aplicação web desenvolvida em Python utilizando o fra
     * Usuários logados podem avaliar filmes com notas e comentários.
     * Visualização das avaliações na página de detalhes do filme e no perfil do usuário.
 * **Listas de Filmes Personalizadas:**
-    * Usuários podem adicionar filmes às listas "Favoritos" e "Quero Assistir Mais Tarde".
+    * Usuários podem adicionar filmes às listas "Favoritos".
     * Visualização e gerenciamento dessas listas no perfil do usuário.
 * **Interface Web Customizada:**
     * Layout responsivo e esteticamente agradável, utilizando Bootstrap para uma experiência de usuário moderna.
