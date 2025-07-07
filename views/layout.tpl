@@ -2,121 +2,90 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>{{title or 'CineReviews'}}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
-    <link href="/static/css/style.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ locals().get('title', 'CineReviews') }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+
+<nav class="navbar navbar-expand-lg navbar-custom">
     <div class="container-fluid">
-        <a class="navbar-brand brand-title" href="/movies">CineReviews</a>
-        <div class="ms-auto">
-            <ul class="navbar-nav">
-                %if defined('logged_in_user') and logged_in_user:
+        <a class="navbar-brand brand-title" href="/movies">CINEREVIEWS</a>
+        <div class="collapse navbar-collapse">
+            <form class="d-flex mx-auto search-container" action="/movies" method="get">
+                <input class="form-control me-2 search-bar" type="search" name="termo_busca" placeholder="Buscar filmes..." aria-label="Search" value="{{ locals().get('termo_busca', '') }}">
+                <button class="btn btn-outline-light" type="submit">Buscar</button>
+            </form>
+
+            <ul class="navbar-nav ms-auto">
+                % if defined('logged_in_user') and logged_in_user:
                     <li class="nav-item">
-                        <span class="navbar-text me-3">Olá, {{logged_in_user.name}}!</span>
+                        <a class="nav-link text-white" href="/profile" title="Meu Perfil">
+                            <i class="fas fa-user-circle me-1"></i>
+                            {{ logged_in_user.name }}
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-outline-light" href="/logout">Logout</a>
+                        <a class="nav-link text-white" href="/logout" title="Sair">Sair</a>
                     </li>
-                %else:
+                % else:
                     <li class="nav-item">
-                        <button type="button" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#loginModal">
+                        <button type="button" class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">
                             Login
                         </button>
                     </li>
                     <li class="nav-item">
-                        <button type="button" class="btn btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#registerModal">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">
                             Criar Conta
                         </button>
                     </li>
-                %end
+                % end
             </ul>
         </div>
     </div>
 </nav>
 
-    <main>
-        {{!base}} 
-    </main>
+<main>
+    {{!base}}
+</main>
 
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="loginModalLabel">Login de Usuário</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form class="auth-form" action="/login" method="post">
-                      <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
-                      </div>
-                      <div class="form-group">
-                        <label for="senha">Senha</label>
-                        <input type="password" class="form-control" id="senha" name="senha" required>
-                      </div>
-                      <button type="submit" class="btn btn-primary btn-block mt-4">Entrar</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+% if not (defined('logged_in_user') and logged_in_user):
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog"><div class="modal-content">
+          <div class="modal-header"><h5 class="modal-title">Login</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+          <div class="modal-body">
+            <form id="loginForm">
+              <div class="mb-3"><input type="email" class="form-control" name="email" placeholder="Email" required></div>
+              <div class="mb-3"><input type="password" class="form-control" name="senha" placeholder="Senha" required></div>
+              <div id="login-error-message" class="alert alert-danger" style="display: none;"></div>
+              <button type="submit" class="btn btn-primary w-100">Entrar</button>
+            </form>
+          </div>
+    </div></div></div>
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog"><div class="modal-content">
+          <div class="modal-header"><h5 class="modal-title">Criar Conta</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+          <div class="modal-body">
+            <form id="registerForm">
+              <div class="mb-3"><input type="text" class="form-control" name="name" placeholder="Nome" required></div>
+              <div class="mb-3"><input type="email" class="form-control" name="email" placeholder="Email" required></div>
+              <div class="mb-3"><input type="password" class="form-control" name="senha" placeholder="Senha" required></div>
+              <div class="mb-3"><input type="date" class="form-control" name="birthdate" placeholder="Data de Nascimento" required></div>
+              <div id="register-error-message" class="alert alert-danger" style="display: none;"></div>
+              <button type="submit" class="btn btn-primary w-100">Cadastrar</button>
+            </form>
+          </div>
+    </div></div></div>
+% end
 
-    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="registerModalLabel">Crie sua Conta</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form class="auth-form" action="/users/add" method="post">
-                      <div class="form-group">
-                        <label for="name">Nome Completo</label>
-                        <input type="text" class="form-control" id="name" name="name" required>
-                      </div>
-                      <div class="form-group">
-                        <label for="email_reg">Email</label>
-                        <input type="email" class="form-control" id="email_reg" name="email" required>
-                      </div>
-                      <div class="form-group">
-                        <label for="birthdate">Data de Nascimento</label>
-                        <input type="date" class="form-control" id="birthdate" name="birthdate" required>
-                      </div>
-                      <div class="form-group">
-                        <label for="senha_reg">Senha</label>
-                        <input type="password" class="form-control" id="senha_reg" name="senha" required>
-                      </div>
-                      <button type="submit" class="btn btn-primary btn-block mt-4">Criar Conta</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/static/auth.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+% if defined('page_js'):
+    <script src="{{ page_js }}"></script>
+% end
 
-    <script>
-  document.querySelector('#registerModal form').addEventListener('submit', async function(event) {
-    event.preventDefault(); // Impede o envio tradicional do formulário
-
-    const form = event.target;
-    const formData = new FormData(form);
-
-    const response = await fetch('/users/add', {
-      method: 'POST',
-      body: formData
-    });
-
-    if (response.redirected) {
-      window.location.href = response.url; // Redireciona corretamente
-    }
-  });
-</script>
 </body>
 </html>

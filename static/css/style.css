@@ -43,7 +43,7 @@ body {
   text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
 }
 
-/* CORREÇÃO DA PROPORÇÃO DO MOSAICO */
+/* PROPORÇÃO DO MOSAICO */
 .movie-montage-background {
   position: fixed;
   top: -25%;
@@ -52,10 +52,11 @@ body {
   height: 150%;
   z-index: -1;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* agora se ajusta */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 10px;
-  transform: rotate(-7deg) scale(1.2); /* mantém o estilo inclinado */
+  transform: rotate(-7deg) scale(1.2); 
 }
+
 
 .montage-image {
   position: relative;
@@ -70,9 +71,10 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover; 
+  object-fit: cover; /* preenche todo o espaço, com leve corte */
   object-position: center;
 }
+
 
 .movie-montage-background::after {
   content: '';
@@ -84,7 +86,7 @@ body {
 }
 
 
-/* ---- 4. SEÇÃO DE CONTEÚDO (LISTA DE FILMES) ---- */
+/* SEÇÃO DE CONTEÚDO (LISTA DE FILMES) */
 .content-section {
   padding: 60px 0;
   position: relative;
@@ -104,7 +106,7 @@ body {
   margin-bottom: 40px;
 }
 
-/* ---- 5. EFEITO DE VIDRO NOS CARDS ---- */
+/*  EFEITO DE VIDRO NOS CARDS  */
 .card {
   transition: all 0.2s ease-in-out;
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -174,4 +176,744 @@ body {
   font-size: 1.1rem;
   font-weight: 700;
   border-radius: 8px;
+}
+
+/* MODAIS DE LOGIN/CADASTRO  */
+.modal-content {
+  background: rgba(30, 40, 60, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  color: #fff;
+}
+.modal-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+.modal-header .modal-title {
+  font-family: 'Anton', sans-serif;
+  font-size: 1.8rem;
+}
+.modal-body .form-group {
+  margin-bottom: 1rem;
+  text-align: left;
+}
+.modal-body .form-control {
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid #555;
+  color: #fff;
+  border-radius: 8px;
+  padding: 12px;
+}
+.modal-body .form-control:focus {
+  background-color: rgba(0, 0, 0, 0.5);
+  border-color: #0d6efd;
+  box-shadow: none;
+  color: #fff;
+}
+.modal-body .btn-block {
+  width: 100%;
+  padding: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: 8px;
+}
+
+/* PÁGINA DE DETALHES DO FILME */
+.movie-details-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  filter: blur(25px) brightness(0.3);
+  transform: scale(1.1);
+  z-index: -2;
+}
+.movie-details-container {
+  padding-top: 120px;
+  padding-bottom: 60px;
+  color: #fff;
+  min-height: 100vh;
+}
+.movie-poster-details {
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+}
+.movie-info h4 {
+  font-family: 'Anton', sans-serif;
+  letter-spacing: 1px;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+.movie-title {
+  font-family: 'Anton', sans-serif;
+  font-size: 4rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  line-height: 1.1;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+}
+.movie-tagline {
+  font-size: 1.2rem;
+  font-style: italic;
+  opacity: 0.8;
+  margin-bottom: 20px;
+}
+.movie-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+.movie-stats span {
+  background: rgba(0,0,0,0.3);
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+.rating-section {
+  background: rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 25px;
+}
+.rating-section .rating-input {
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid #555;
+  color: #fff;
+}
+.rating-section .rating-input:focus {
+  background-color: rgba(0, 0, 0, 0.5);
+  border-color: #198754;
+  box-shadow: none;
+  color: #fff;
+}
+.existing-reviews-section h4 {
+  font-family: 'Anton', sans-serif;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+.review-card {
+  background: rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 15px;
+}
+.review-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+.review-card-rating {
+  font-weight: 700;
+  color: #ffc107;
+}
+.review-card-body p {
+  font-style: italic;
+  opacity: 0.9;
+  margin-bottom: 0;
+}
+
+/* PÁGINA DE PERFIL  */
+.profile-container {
+  padding-top: 100px;
+  padding-bottom: 60px;
+  max-width: 900px;
+}
+.profile-header .profile-name {
+  font-family: 'Anton', sans-serif;
+  font-size: 3.5rem;
+  color: #fff;
+}
+.profile-header .profile-email {
+  font-size: 1.1rem;
+}
+.profile-divider {
+  margin: 40px 0;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+.reviews-section h2 {
+  font-family: 'Anton', sans-serif;
+  font-size: 2.5rem;
+  margin-bottom: 30px;
+}
+.review-list {
+  list-style: none;
+  padding: 0;
+}
+.review-item {
+  background: rgba(30, 40, 60, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.review-movie-title {
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 10px 0;
+}
+.review-comment {
+  font-style: italic;
+  opacity: 0.8;
+  margin: 0;
+}
+.review-rating span {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffc107;
+  background: rgba(0,0,0,0.3);
+  padding: 10px 15px;
+  border-radius: 8px;
+}
+
+/* SISTEMA DE AVALIAÇÃO COM ESTRELAS */
+.star-rating {
+  font-size: 2.5rem;
+  cursor: pointer;
+  display: inline-block;
+}
+.star {
+  color: #555;
+  transition: color 0.2s;
+}
+.star-rating[data-rating] .star:nth-child(-n + attr(data-rating)) {
+    color: #ffc107;
+}
+.star-rating:hover .star {
+  color: #ffc107;
+}
+.star-rating .star:hover ~ .star {
+  color: #555;
+}
+
+/* ESTILOS PARA A BARRA DE BUSCA */
+.search-bar {
+  min-width: 400px; /* Largura da barra de busca */
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
+}
+
+.search-bar::placeholder {
+  color: #ccc;
+}
+
+.search-bar:focus {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: #fff;
+  color: #fff;
+  box-shadow: none;
+}
+
+
+#login-error-message:not(:empty) {
+    display: block !important;
+}
+
+#register-error-message:not(:empty) {
+    display: block !important;
+}
+
+/* ESTILOS PARA A PÁGINA DE PERFIL */
+
+.profile-page-grid {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+  padding-top: 100px;
+  padding-bottom: 60px;
+}
+
+.profile-sidebar {
+  width: 250px; /* Largura da barra lateral */
+  flex-shrink: 0; /* Impede que a barra encolha */
+}
+
+.user-info-box {
+  background: #1f2b3c; /* Um azul um pouco mais claro que a navbar */
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #2a3b4f;
+}
+
+.profile-username {
+  font-family: 'Anton', sans-serif;
+  font-size: 2rem; 
+  margin: 0 0 5px 0;
+  line-height: 1.2;
+}
+
+.profile-user-email {
+  font-size: 0.9rem; /* Fonte pequena para o email */
+  color: #8a9bab; 
+  margin: 0;
+  word-wrap: break-word;
+}
+
+.profile-main-content {
+  flex-grow: 1; /* Ocupa o resto do espaço */
+}
+
+.reviews-section .section-title {
+  font-family: 'Rubik', sans-serif;
+  font-size: 0.9rem; 
+  font-weight: 700;
+  color: #8a9bab;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #2a3b4f;
+  padding-bottom: 10px;
+}
+
+.review-list-profile {
+  list-style: none;
+  padding: 0;
+}
+
+.review-item-profile {
+  display: flex;
+  gap: 20px;
+  padding: 20px 0;
+  border-bottom: 1px solid #2a3b4f;
+}
+
+.review-poster-profile {
+  width: 80px;
+  flex-shrink: 0;
+}
+
+.review-poster-profile img {
+  width: 100%;
+  border-radius: 5px;
+  border: 1px solid #2a3b4f;
+}
+
+.review-details-profile {
+  display: flex;
+  flex-direction: column;
+}
+
+.review-movie-title-profile {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+}
+
+.rating-and-comment {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.star-rating-display {
+  font-size: 1rem;
+  color: #00e054; 
+  font-weight: 700;
+}
+
+.review-comment-profile {
+  font-style: italic;
+  color: #adb5bd;
+  margin: 0;
+}
+
+
+/*  FAVORITOS NO PERFIL*/
+.favorites-section {
+  margin-bottom: 50px;
+}
+
+.favorites-section .section-title {
+  font-family: 'Rubik', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #8a9bab;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #2a3b4f;
+  padding-bottom: 10px;
+}
+
+.favorite-poster {
+  width: 100px;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid #2a3b4f;
+  cursor: pointer;
+}
+
+.favorite-poster:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(0, 224, 84, 0.4); 
+  border-color: #00e054;
+}
+
+
+/*  ANIMAÇÃO SUAVE E TOOLTIPS NOS FAVORITOS */
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.favorite-poster {
+  width: 100px;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid #2a3b4f;
+  cursor: pointer;
+  animation: fadeInScale 0.5s ease forwards;
+  position: relative;
+}
+
+.favorite-poster:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(0, 224, 84, 0.4);
+  border-color: #00e054;
+}
+
+.favorite-poster img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+/* Tooltip com o título do filme */
+.favorite-poster::after {
+  content: attr(data-title);
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(20, 20, 20, 0.95);
+  padding: 5px 10px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  color: #00e054;
+  opacity: 0;
+  border-radius: 5px;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  z-index: 10;
+}
+
+.favorite-poster:hover::after {
+  opacity: 1;
+}
+
+/* ---- NOVOS ESTILOS PARA A PÁGINA DE PERFIL E BUSCA ---- */
+
+/* Estilo da Barra de Busca na Navbar */
+.search-container {
+  width: 50%;
+  max-width: 500px;
+}
+.search-bar {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
+}
+.search-bar::placeholder { color: #ccc; }
+.search-bar:focus {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: #fff;
+  color: #fff;
+  box-shadow: none;
+}
+
+/* Layout Geral da Página de Perfil */
+.profile-page-container {
+  padding-top: 100px;
+  padding-bottom: 60px;
+}
+
+/* Cabeçalho com o Nome de Usuário */
+.profile-page-header {
+  padding-bottom: 20px;
+}
+.profile-page-username {
+  font-family: 'Anton', sans-serif;
+  font-size: 2.5rem;
+  color: #fff;
+  margin: 0;
+}
+
+/* Menu de Navegação do Perfil */
+.profile-nav {
+  display: flex;
+  gap: 20px;
+  border-bottom: 1px solid #444;
+  margin-bottom: 30px;
+}
+.profile-nav-link {
+  font-family: 'Rubik', sans-serif;
+  color: #9ab;
+  text-decoration: none;
+  padding: 10px 0;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+}
+.profile-nav-link:hover {
+  color: #fff;
+}
+.profile-nav-link.active {
+  color: #fff;
+  border-bottom-color: #00e054; 
+}
+
+/* Lista de Avaliações no Perfil */
+.profile-review-list {
+  list-style: none;
+  padding: 0;
+}
+.profile-review-item {
+  display: flex;
+  gap: 20px;
+  padding: 25px 0;
+  border-bottom: 1px solid #444;
+}
+.profile-review-poster {
+  width: 100px;
+  flex-shrink: 0;
+}
+.profile-review-poster img {
+  width: 100%;
+  border-radius: 5px;
+}
+.profile-review-details {
+  padding-top: 5px;
+}
+.profile-review-movie-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0;
+}
+.profile-review-movie-year {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #888;
+}
+.profile-review-rating {
+  margin: 10px 0;
+}
+.star-rating-display {
+  font-size: 0.9rem;
+  color: #00e054;
+  font-weight: 700;
+}
+.profile-review-comment {
+  color: #ccc;
+  font-size: 1rem;
+  margin: 0;
+  padding-left: 10px;
+  border-left: 2px solid #555;
+}
+
+/* ESTILOS GERAIS E NAVBAR  */
+body {
+    padding-top: 80px; /* Espaço para a navbar fixa */
+}
+
+.search-container {
+    width: 50%;
+    max-width: 500px;
+}
+
+/* PÁGINA DE DETALHES DO FILME */
+.favorite-icon-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+#favorite-icon {
+    font-size: 2.5rem;
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+#favorite-icon:hover {
+    color: rgba(255, 255, 255, 0.8);
+    transform: scale(1.1);
+}
+
+#favorite-icon.favorited {
+    color: #ff0050; 
+}
+
+
+/* NOVA PÁGINA DE PERFIL*/
+.profile-page-container {
+  padding-top: 40px;
+  padding-bottom: 60px;
+  max-width: 1100px;
+}
+
+.profile-page-header .profile-page-username {
+  font-family: 'Anton', sans-serif;
+  font-size: 3rem;
+  color: #fff;
+  margin-bottom: 30px;
+}
+
+.section-title {
+  font-family: 'Rubik', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #8a9bab;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #2a3b4f;
+  padding-bottom: 10px;
+}
+
+/* Lista de Avaliações */
+.profile-review-list {
+  list-style: none;
+  padding: 0;
+}
+
+.profile-review-item {
+  display: flex;
+  gap: 20px;
+  padding: 25px 0;
+  border-bottom: 1px solid #2a3b4f;
+}
+.profile-review-item:last-child {
+    border-bottom: none;
+}
+
+.profile-review-poster {
+  width: 80px;
+  flex-shrink: 0;
+}
+
+.profile-review-poster img {
+  width: 100%;
+  border-radius: 5px;
+  border: 1px solid #2a3b4f;
+}
+
+.profile-review-details {
+  padding-top: 5px;
+}
+
+.profile-review-movie-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0;
+}
+.profile-review-movie-title a {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.profile-review-movie-title a:hover {
+  color: #00e054;
+}
+
+.profile-review-movie-year {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #888;
+  margin-left: 10px;
+}
+
+.profile-review-rating {
+  margin: 10px 0;
+}
+
+.star-rating-display {
+  font-size: 1rem;
+  color: #00e054;
+  letter-spacing: 2px;
+}
+
+.profile-review-comment {
+  color: #ccc;
+  font-size: 1rem;
+  font-style: italic;
+  margin-top: 10px;
+  padding-left: 15px;
+  border-left: 3px solid #445566;
+}
+
+/* --- Barra Lateral de Favoritos --- */
+.favorites-sidebar {
+    position: sticky;
+    top: 100px; /* Distância do topo da página */
+}
+
+.favorite-posters-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 colunas */
+    gap: 15px;
+}
+
+.favorite-poster-container {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid #2a3b4f;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.favorite-poster-container:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(0, 224, 84, 0.5);
+    border-color: #00e054;
+}
+
+.favorite-poster-img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+
+/* ---- ESTILO PARA O BOTÃO DE FAVORITO ---- */
+.action-icons {
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
+.favorite-heart {
+  font-size: 2.5rem; 
+  color: #555; 
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.favorite-heart:hover {
+  transform: scale(1.2);
+}
+.favorite-heart.favorited {
+  color: #ff4d4d; 
 }

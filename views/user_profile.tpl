@@ -1,58 +1,64 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu App de Filmes</title>
-</head>
-<body>
-    <header>
-        <nav>
-            <a href="/">Home</a> |
-            <a href="/movies">Filmes</a> |
-            % if user:
-                Olá, {{user.name}}! <a href="/profile">Meu Perfil</a> | <a href="/logout">Sair</a>
-            % else:
-                <a href="/login">Login</a>
-            % end
-        </nav>
-        <hr>
+% rebase('layout.tpl', title='Perfil de ' + user.name, logged_in_user=user)
+
+<div class="container profile-page-container">
+    <header class="profile-page-header">
+        <h1 class="profile-page-username">{{ user.name }}</h1>
     </header>
-    <main>
 
-    <h1>Perfil de {{user.name}}</h1>
-    <p>Email: {{user.email}}</p>
+    <div class="row gx-5">
+        <div class="col-md-8">
+            <section class="reviews-section">
+                <h2 class="section-title">ATIVIDADE RECENTE</h2>
+                % if not user_reviews:
+                    <p class="text-muted">Nenhuma avaliação para mostrar.</p>
+                % else:
+                    <ul class="profile-review-list">
+                        % for review in user_reviews:
+                        <li class="profile-review-item">
+                            <div class="profile-review-poster">
+                                <a href="/movies/{{ review['movie_details']['id'] }}">
+                                    <img src="https://image.tmdb.org/t/p/w500{{ review['movie_details']['poster_path'] }}" alt="Poster de {{ review['movie_details']['title'] }}">
+                                </a>
+                            </div>
+                            <div class="profile-review-details">
+                                <h3 class="profile-review-movie-title">
+                                    <a href="/movies/{{ review['movie_details']['id'] }}">{{ review['movie_details']['title'] }}</a>
+                                    <span class="profile-review-movie-year">{{ review['movie_details']['release_date'][:4] if review['movie_details']['release_date'] else '' }}</span>
+                                </h3>
+                                <div class="profile-review-rating">
+                                    <span class="star-rating-display">
+                                        % nota = int(review.get('nota', 0))
+                                        {{ '★' * nota }}{{ '☆' * (5 - nota) }}
+                                    </span>
+                                </div>
+                                % if review.get('comentario'):
+                                    <p class="profile-review-comment">“{{ review.get('comentario') }}”</p>
+                                % end
+                            </div>
+                        </li>
+                        % end
+                    </ul>
+                % end
+            </section>
+        </div>
 
-    <h2>Minhas Avaliações</h2>
-    % if reviews:
-    <ul>
-    % for item in reviews:
-        <li>
-            <strong>Filme:</strong> 
-            <a href="/filmes/{{item['movie'].id}}/avaliar">{{item['movie'].name}} ({{item['movie'].ano}})</a> <br>
-            
-            <strong>Nota:</strong> {{item['review'].avaliacao}} <br>
-            <strong>Comentário:</strong> {{item['review'].comentario_texto}}
-            
-            % if item['movie'].poster:
-                <br><img src="{{item['movie'].poster}}" alt="Poster de {{item['movie'].name}}" style="width: 100px; height: auto;">
-            % end
-            
-            <p style="font-size: 0.8em; color: #666;">
-                Avaliado por: {{item['review'].user_name}} em {{item['review'].timestamp.split('T')[0]}}
-            </p>
-        </li>
-    % end
-    </ul>
-    % else:
-    <p>Você ainda não fez nenhuma avaliação.</p>
-    % end
-
-    <p><a href="/movies">Voltar para a lista de filmes</a></p>
-    </main>
-    <footer>
-        <hr>
-        <p>&copy; 2025 Meu App de Filmes. Todos os direitos reservados.</p>
-    </footer>
-</body>
-</html>
+        <div class="col-md-4">
+            <aside class="favorites-sidebar">
+                <h2 class="section-title">FAVORITOS</h2>
+                % if not user_favorites:
+                    <p class="text-muted">Nenhum filme favorito ainda.</p>
+                % else:
+                    <div class="favorite-posters-grid">
+                        % for movie in user_favorites:
+                            <div class="favorite-poster-container">
+                                <a href="/movies/{{ movie['id'] }}" title="{{ movie['title'] }}">
+                                    <img src="https://image.tmdb.org/t/p/w500{{ movie['poster_path'] }}" alt="{{ movie['title'] }}" class="favorite-poster-img">
+                                </a>
+                            </div>
+                        % end
+                    </div>
+                % end
+            </aside>
+        </div>
+    </div>
+</div>

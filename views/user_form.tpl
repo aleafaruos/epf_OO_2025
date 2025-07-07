@@ -1,25 +1,41 @@
-%rebase('layout', title='Cadastro de Usuário')
+% rebase('layout', title='Formulário Usuário')
 
-<h1>{{'Editar Usuário' if user else 'Novo Usuário'}}</h1>
+<section class="form-section">
+    <h1>{{'Editar Usuário' if user else 'Adicionar Usuário'}}</h1>
 
-% if error_message:
-    <p style="color: red;">{{error_message}}</p>
-% end
+    % if error:
+    <div class="alert alert-danger" style="margin-bottom: 20px;">
+        {{error}}
+    </div>
+    % end
 
-<form action="{{action}}" method="post">
-    <label for="name">Nome:</label><br>
-    <input type="text" name="name" value="{{user.name if user else ''}}" required><br><br>
+    <form action="{{action}}" method="post" class="form-container">
+        <div class="form-group">
+            <label for="name">Nome:</label>
+            <input type="text" id="name" name="name" required 
+                   value="{{user.name if user else ''}}">
+        </div>
 
-    <label for="email">Email:</label><br>
-    <input type="email" name="email" value="{{user.email if user else ''}}" required><br><br>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required 
+                   value="{{user.email if user else ''}}">
+        </div>
 
-    <label for="birthdate">Data de Nascimento:</label><br>
-    <input type="date" name="birthdate" value="{{user.birthdate if user else ''}}" required><br><br>
+        <div class="form-group">
+            <label for="senha">Senha:</label>
+            <input type="password" id="senha" name="senha" required>
+        </div>
 
-    <label for="senha">Senha:</label><br>
-    <input type="password" name="senha" required><br><br>
+        <div class="form-group">
+            <label for="birthdate">Data de Nascimento:</label>
+            <input type="date" id="birthdate" name="birthdate" required 
+                   value="{{user.birthdate if user else ''}}">
+        </div>
 
-    <button type="submit">{{'Salvar Alterações' if user else 'Cadastrar'}}</button>
-</form>
-
-<p><a href="/users">Voltar</a></p>
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">Salvar</button>
+            <a href="/users" class="btn-cancel">Voltar</a>
+        </div>
+    </form>
+</section>

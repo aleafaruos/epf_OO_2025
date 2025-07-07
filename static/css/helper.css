@@ -1,4 +1,3 @@
-/* application.css */
 
 /* Reset básico para remover estilos padrão */
 body, h1, h4, p, img {
@@ -16,7 +15,7 @@ body {
     padding: 20px;
     display: flex;
     flex-direction: column; /* Adiciona esta linha para alinhar os itens em coluna */
-    justify-content: flex-start; /* Alinha o conteúdo no início, em vez de no centro */
+    justify-content: flex-start; 
     align-items: center;
     min-height: 100vh;
     margin: 0;

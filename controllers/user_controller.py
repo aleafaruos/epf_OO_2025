@@ -1,221 +1,123 @@
-# controllers/user_controller.py
-from bottle import Bottle, request, redirect, response, HTTPError # Importa HTTPError para lidar com 404
+from bottle import Bottle, request, redirect, response
+import json
 from .base_controller import BaseController
 from services.user_service import UserService
-from services.avaliacao_service import AvaliacaoService # Importa AvaliacaoService
-from services.movie_service import movieService # Importa movieService
-from models.movie import Movie # Importa a CLASSE Movie para criar objetos Movie
+from services.avaliacao_service import AvaliacaoService
+from services.api_service import TMDBService
 
 class UserController(BaseController):
+
     def __init__(self, app):
         super().__init__(app)
         self.user_service = UserService()
-        self.avaliacao_service = AvaliacaoService() # Instancia AvaliacaoService
-        self.movie_service = movieService() # Instancia movieService
+        self.avaliacao_service = AvaliacaoService()
+        self.tmdb_service = TMDBService()
         self.SESSION_COOKIE_NAME = 'user_session_id'
         self.setup_routes()
 
-    # Rotas User
     def setup_routes(self):
-        self.app.route('/users', method='GET', callback=self.list_users)
-        self.app.route('/users/add', method=['GET', 'POST'], callback=self.add_user)
-        self.app.route('/users/edit/<user_id:int>', method=['GET', 'POST'], callback=self.edit_user)
-        self.app.route('/users/delete/<user_id:int>', method='POST', callback=self.delete_user)
-        self.app.route('/login', method='GET', callback=self.login_form)
+        """Define todas as rotas relacionadas ao usuário."""
+        self.app.route('/users/add', method='POST', callback=self.add_user)
         self.app.route('/login', method='POST', callback=self.do_login)
         self.app.route('/logout', method='GET', callback=self.do_logout)
         self.app.route('/profile', method='GET', callback=self.user_profile)
-        self.app.route('/users/<user_id:int>/profile', method='GET', callback=self.user_profile_by_id)
-        
-    def list_users(self):
-        logged_in_user = self.get_logged_in_user()
-        if not logged_in_user:
-            return self.redirect('/login')
-        
-    def set_logged_in_user_cookie(self, user_id):
-        response.set_cookie("user_session_id", str(user_id), path="/")
-
-    def get_logged_in_user(self):
-        user_id = request.get_cookie("user_session_id")
-        if user_id:
-            from services.user_service import UserService
-            return UserService().get_by_id(int(user_id))
-        return None
-
-        
-        users = self.user_service.get_all()
-        return self.render('users', users=users, logged_in_user=logged_in_user)
+        self.app.route('/api/favorites/toggle', method='POST', callback=self.toggle_favorite_api)
 
     def add_user(self):
-        if request.method == 'GET':
-            return self.render('user_form', user=None, action="/users/add", error_message='')
+        """Cria um novo usuário a partir do formulário do modal."""
+        try:
+            new_user = self.user_service.save()
+            if new_user:
+                response.set_cookie(self.SESSION_COOKIE_NAME, str(new_user.id), path='/', httponly=True)
+                return json.dumps({'success': True})
+            else:
+                raise ValueError("Não foi possível criar o usuário.")
+        except ValueError as e:
+            response.status = 400
+            return json.dumps({'success': False, 'message': str(e)})
+
+    def do_login(self):
+        """Autentica o usuário a partir do formulário do modal."""
+        email = request.forms.get('email')
+        raw_password = request.forms.get('senha')
+        user = self.user_service.check_credentials(email, raw_password)
+        if user:
+            response.set_cookie(self.SESSION_COOKIE_NAME, str(user.id), path='/', httponly=True)
+            return json.dumps({'success': True})
         else:
-            try:
-                self.user_service.save()  # chama sem argumentos, o método save lê do request.forms internamente
-                return self.redirect('/users')
-            except ValueError as e:
-                return self.render('user_form', user=None, action="/users/add", error_message=str(e))
-
-
-
-
-    def edit_user(self, user_id):
-        logged_in_user = self.get_logged_in_user()
-        if not logged_in_user:
-            return self.redirect('/login')
-        
-        user = self.user_service.get_by_id(user_id)
-        if not user:
-            return "Usuário não encontrado"
-
-        if request.method == 'GET':
-            return self.render('user_form', user=user, action=f"/users/edit/{user_id}")
-        else:
-            self.user_service.edit_user(user)
-            self.redirect('/users')
-
-    def delete_user(self, user_id):
-        logged_in_user = self.get_logged_in_user()
-        if not logged_in_user:
-            return self.redirect('/login')
-        
-        self.user_service.delete_user(user_id)
-        self.redirect('/users')
+            response.status = 401
+            return json.dumps({'success': False, 'message': 'Email ou senha inválidos.'})
 
     def do_logout(self):
+        """Faz o logout do usuário."""
         response.delete_cookie(self.SESSION_COOKIE_NAME, path='/')
-        self.redirect('/login')
+        return self.redirect('/movies')
 
-    def get_logged_in_user(self):
+    def user_profile(self):
+        user = self._get_logged_in_user()
+        if not user:
+            return self.redirect('/movies')
+        
+        favorite_movies_details = []
+        if user.favorites:
+            for movie_id in user.favorites:
+                try:
+                    movie_details = self.tmdb_service.get_movie_details(movie_id)
+                    if movie_details:
+                        favorite_movies_details.append(movie_details)
+                except Exception as e:
+                    print(f"Erro ao buscar filme favorito ID {movie_id}: {e}")
+        
+        user_reviews = self.avaliacao_service.get_all_avaliacoes_by_user_id(user.id)
+        reviews_with_details = []
+        for review in user_reviews:
+            try:
+                movie_details = self.tmdb_service.get_movie_details(review.id_filme)
+                if movie_details:
+                    review_data = review.to_dict()
+                    review_data['movie_details'] = movie_details
+                    reviews_with_details.append(review_data)
+            except Exception as e:
+                print(f"Erro ao buscar filme avaliado ID {review.id_filme}: {e}")
+
+        reviews_with_details.sort(key=lambda r: r['id'], reverse=True)
+
+        return self.render('user_profile', 
+                           user=user, 
+                           user_favorites=favorite_movies_details, 
+                           user_reviews=reviews_with_details,
+                           logged_in_user=user)
+
+    def toggle_favorite_api(self):
+        """Adiciona ou remove um filme dos favoritos de um usuário via API."""
+        user = self._get_logged_in_user()
+        if not user:
+            response.status = 401
+            return json.dumps({'success': False, 'message': 'Usuário não autenticado.'})
+        
+        movie_id = request.forms.get('movie_id')
+        if not movie_id:
+            response.status = 400
+            return json.dumps({'success': False, 'message': 'ID do filme não fornecido.'})
+
+        try:
+            is_now_favorite = self.user_service.toggle_favorite(user.id, movie_id)
+            return json.dumps({'success': True, 'isFavorite': is_now_favorite})
+        except Exception as e:
+            response.status = 500
+            return json.dumps({'success': False, 'message': str(e)})
+
+    def _get_logged_in_user(self):
+        """Função auxiliar para pegar o usuário da sessão."""
         user_id_str = request.get_cookie(self.SESSION_COOKIE_NAME)
         if user_id_str:
             try:
                 user_id = int(user_id_str)
-                user = self.user_service.get_by_id(user_id)
-                if user:
-                    return user
-                else:
-                    response.delete_cookie(self.SESSION_COOKIE_NAME, path='/')
-                    return None
+                return self.user_service.get_by_id(user_id)
             except (ValueError, TypeError):
-                response.delete_cookie(self.SESSION_COOKIE_NAME, path='/')
                 return None
         return None
 
-    def login_form(self):
-        next_url = request.query.get('next', '')
-        return self.render('login_form', email='', error_message='', next_url=next_url) 
-
-    def do_login(self):
-        email = request.forms.get('email')
-        raw_password = request.forms.get('senha')
-        next_url = request.forms.get('next')  # Adicionado aqui
-
-        print(f"\n--- DEBUG LOGIN INICIADO ---")
-        print(f"Tentativa de login para email: {email}")
-
-        user = self.user_service.check_credentials(email, raw_password)
-
-        if user:
-            self.set_logged_in_user_cookie(user.id)
-
-            if next_url:
-                return self.redirect(next_url)
-            else:
-                return self.redirect('/profile')
-        else:
-            error = "Email ou senha inválidos."
-            return self.render('login_form', email=email, error_message=error, next_url=next_url)  # Incluído next_url aqui
-
-
-        if user:
-            print(f"Usuário {user.name} logado com sucesso!")
-            response.set_cookie(self.SESSION_COOKIE_NAME, str(user.id), path='/', httponly=True)
-            
-            next_url = request.forms.get('next')
-
-            print(f"Valor do parâmetro 'next' na URL (POST): '{next_url}'")
-
-            if next_url:
-                print(f"Redirecionando para: {next_url}")
-                return self.redirect(next_url)
-            else:
-                print("Nenhum 'next' encontrado. Redirecionando para /users")
-                return self.redirect('/users')
-
-        else:
-            error = "Email ou senha inválidos."
-            print(f"Falha no login para {email}. Erro: {error}")
-            print(f"--- DEBUG LOGIN ENCERRADO ---\n")
-            return self.render('login_form', email=email, error_message=error)
-
-    # metodo da Página de Perfil do Usuário Logado ---
-    def user_profile(self):
-        logged_in_user = self.get_logged_in_user()
-        if not logged_in_user:
-            return self.redirect('/login?next=/profile') # Redireciona para login se não estiver logado
-
-        # Pega todas as avaliações feitas por este usuário.
-        # O 'avaliacao_service' agora já retorna uma lista de dicionários,
-        # onde cada item é {'review': Avaliacao_obj, 'movie': Movie_obj}.
-        # Isso já é o formato que o template 'user_profile' espera.
-        reviews_for_template = self.avaliacao_service.get_all_avaliacoes_by_user_id(logged_in_user.id)
-        
-        # --- LINHAS DE DEBUG: ADICIONE ESTAS 4 LINHAS ---
-        print("\n--- DEBUG: reviews_for_template no user_controller.py ---")
-        print(f"Tipo de reviews_for_template: {type(reviews_for_template)}")
-        if reviews_for_template:
-            print(f"Tipo do primeiro item: {type(reviews_for_template[0])}")
-            if isinstance(reviews_for_template[0], dict):
-                print(f"Chaves do primeiro item: {reviews_for_template[0].keys()}")
-                if 'movie' in reviews_for_template[0] and isinstance(reviews_for_template[0]['movie'], Movie):
-                    print("O primeiro item tem a chave 'movie' e é um objeto Movie!")
-                else:
-                    print("AVISO: O primeiro item NÃO tem a chave 'movie' ou não é um objeto Movie.")
-        else:
-            print("reviews_for_template está vazia.")
-        print("--- FIM DEBUG ---\n")
-        # --- FIM DAS LINHAS DE DEBUG ---
-
-        # Renderiza o template de perfil do usuário
-        return self.render('user_profile', 
-                            user=logged_in_user, 
-                            reviews=reviews_for_template) # Passe a lista já pronta
-
-    #metodo Página de Perfil de OUTRO Usuário (Opcional) ---
-    def user_profile_by_id(self, user_id):
-        logged_in_user = self.get_logged_in_user()
-        if not logged_in_user:
-            return self.redirect(f'/login?next=/users/{user_id}/profile')
-
-        target_user = self.user_service.get_by_id(user_id)
-        if not target_user:
-            return HTTPError(404, "Usuário não encontrado.") 
-
-        # Pega as avaliações para o usuário alvo.
-        # Assim como em user_profile, o retorno já está no formato correto.
-        reviews_for_template = self.avaliacao_service.get_all_avaliacoes_by_user_id(target_user.id)
-        
-        # --- LINHAS DE DEBUG: ADICIONE ESTAS 4 LINHAS TAMBÉM AQUI ---
-        print("\n--- DEBUG: reviews_for_template no user_profile_by_id ---")
-        print(f"Tipo de reviews_for_template: {type(reviews_for_template)}")
-        if reviews_for_template:
-            print(f"Tipo do primeiro item: {type(reviews_for_template[0])}")
-            if isinstance(reviews_for_template[0], dict):
-                print(f"Chaves do primeiro item: {reviews_for_template[0].keys()}")
-                if 'movie' in reviews_for_template[0] and isinstance(reviews_for_template[0]['movie'], Movie):
-                    print("O primeiro item tem a chave 'movie' e é um objeto Movie!")
-                else:
-                    print("AVISO: O primeiro item NÃO tem a chave 'movie' ou não é um objeto Movie.")
-        else:
-            print("reviews_for_template está vazia.")
-        print("--- FIM DEBUG ---\n")
-        # --- FIM DAS LINHAS DE DEBUG ---
-
-        return self.render('user_profile', 
-                            user=target_user, 
-                            reviews=reviews_for_template)
-
-
+# Linhas de inicialização do controller que são necessárias para a importação
 user_routes = Bottle()
 user_controller = UserController(user_routes)
